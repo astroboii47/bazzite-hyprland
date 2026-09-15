@@ -1,0 +1,2 @@
+#!/usr/bin/bash
+exec qs -p /etc/xdg/quickshell/bazzite-ryoku/shell.qml || exec waybar

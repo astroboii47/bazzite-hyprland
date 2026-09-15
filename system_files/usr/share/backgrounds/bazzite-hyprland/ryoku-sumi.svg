@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <defs><linearGradient id="paper" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ebe5d9"/><stop offset="1" stop-color="#d8d0c1"/></linearGradient><filter id="soft"><feGaussianBlur stdDeviation="34"/></filter></defs>
+  <rect width="1920" height="1080" fill="url(#paper)"/>
+  <circle cx="1550" cy="250" r="190" fill="#b74c3d" opacity=".86"/>
+  <path d="M-100 940 C280 650 420 990 760 720 S1330 470 2010 850 L2010 1150 L-100 1150Z" fill="#20221f" opacity=".94"/>
+  <path d="M-80 900 C300 690 470 930 780 690 S1370 520 1980 810" fill="none" stroke="#585a51" stroke-width="65" opacity=".28" filter="url(#soft)"/>
+  <g fill="#22231f" opacity=".88" font-family="serif"><text x="120" y="170" font-size="86">緑</text><text x="126" y="212" font-size="15" letter-spacing="7">RYOKU / BAZZITE</text></g>
+  <g stroke="#292b27" opacity=".2"><path d="M120 250h330"/><path d="M120 264h180"/></g>
+</svg>

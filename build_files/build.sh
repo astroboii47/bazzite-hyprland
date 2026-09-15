@@ -43,4 +43,6 @@ test -x /usr/bin/Hyprland
 test -f /usr/share/wayland-sessions/hyprland-uwsm.desktop
 test -x /usr/libexec/xdg-desktop-portal-hyprland
 test -f /etc/xdg/hypr/hyprland.lua
+test -f /etc/xdg/quickshell/bazzite-ryoku/shell.qml
+test -x /usr/bin/bazzite-ryoku-shell
 test -f /etc/xdg/waybar/config.jsonc

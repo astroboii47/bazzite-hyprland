@@ -35,7 +35,7 @@ hl.config({
     },
     animations = { enabled = true },
     dwindle = { preserve_split = true },
-    misc = { force_default_wallpaper = -1, disable_hyprland_logo = false },
+    misc = { force_default_wallpaper = 0, disable_hyprland_logo = true },
     input = {
         kb_layout = "us",
         follow_mouse = 1,
@@ -54,7 +54,8 @@ hl.animation({ leaf = "fade", enabled = true, speed = 4, bezier = "easeOut" })
 hl.animation({ leaf = "workspaces", enabled = true, speed = 4, bezier = "easeOut", style = "slide" })
 
 hl.on("hyprland.start", function()
-    hl.exec_cmd("waybar")
+    hl.exec_cmd("bazzite-ryoku-shell")
+    hl.exec_cmd("hyprpaper")
     hl.exec_cmd("swaync")
     hl.exec_cmd("hypridle")
     hl.exec_cmd("hyprpolkitagent")
