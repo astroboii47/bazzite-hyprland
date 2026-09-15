@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Pin the upstream desktop so every image build produces the same shell.
-ryoku_commit="e76a32d9c332bbb8985de5783bdd06d3eda589da"
+ryoku_commit="e76a32d474a467d45e0dc67a46d1c6057d024f5b"
 src="$(mktemp -d)"
 trap 'rm -rf "$src"' EXIT
 
@@ -45,4 +45,3 @@ test -x /usr/bin/ryoku-shell
 test -x /usr/bin/ryogami
 test -f /usr/lib/qt6/qml/Ryoku/Blobs/qmldir
 test -f /usr/share/ryoku-source/ryoku/shell/quickshell/shell/shell.qml
-
