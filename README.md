@@ -20,8 +20,13 @@ Upstream template snapshot: `1dd3b656c4eb99dea9fbf9bd8210a754bd94adab`.
 
 The container workflow runs on pushes to main (except README-only changes), pull
 requests to main, manual dispatch, and daily at 10:05 UTC. It builds on an x86_64
-Linux runner, runs `bootc container lint`, rechunks the image, and publishes dated
-and commit-specific tags alongside `latest`.
+Linux runner, runs `bootc container lint`, and publishes dated
+and commit-specific tags alongside `latest`. The image is pushed once; aliases
+copy the published manifest and are checked against the same digest before it is
+signed. This keeps every tag covered by the same signature.
+
+The minimal baseline preserves Bazzite's existing layers. Optional rechunking
+recipes remain available in the Justfile for later customization.
 
 Only default-branch builds publish and sign. Pull requests build without publishing
 or receiving the signing secret. The workflow checks signing configuration before

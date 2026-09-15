@@ -82,23 +82,8 @@ jobs:
             ${IMAGE_NAME} \
             ${DEFAULT_TAG}
 
-      # This is optional, this provides smaller delta updates
-      - name: Rechunk with rpm-ostree
-        id: rechunk
-        run: |
-          just ostree-rechunk \
-            ${IMAGE_NAME} \
-            ${DEFAULT_TAG}
-
-      # If you are feeling adventurous, use the new distro agnostic rechunker
-      # https://github.com/coreos/chunkah
-      # You can delete the Rechunk with rpm-ostree portion then if you use this
-      #- name: Rechunk with Chunkah
-      #  id: rechunk
-      #  run: |
-      #    just rechunk \
-      #      ${IMAGE_NAME} \
-      #      ${DEFAULT_TAG}
+      # Preserve Bazzite's existing layers for this minimal baseline.
+      # Optional rechunking recipes remain available in the Justfile.
 
       - name: Generate Build Tags
         id: gen-build-tags
@@ -137,14 +122,23 @@ jobs:
         env:
           ALIAS_TAGS: ${{ steps.gen-build-tags.outputs.alias_tags }}
         run: |
-          set -euox pipefail
-          for tag in ${ALIAS_TAGS}; do
-            podman push --digestfile=/tmp/digestfile ${IMAGE_NAME}:${tag} ${IMAGE_REGISTRY}/${IMAGE_NAME}:${tag}
-          done
-
+          set -euo pipefail
+          image="${IMAGE_REGISTRY}/${IMAGE_NAME}"
+          podman push --digestfile=/tmp/digestfile \
+            "${IMAGE_NAME}:${DEFAULT_TAG}" "${image}:${DEFAULT_TAG}"
           digest=$(< /tmp/digestfile)
 
-          echo "digest=${digest}" >> $GITHUB_OUTPUT
+          # Copy the published manifest, preserving the exact signed digest.
+          # Repeated pushes from local storage can produce different digests.
+          for tag in ${ALIAS_TAGS}; do
+            if [[ "$tag" != "$DEFAULT_TAG" ]]; then
+              skopeo copy --all --preserve-digests \
+                "docker://${image}@${digest}" "docker://${image}:${tag}"
+            fi
+            actual=$(skopeo inspect --format '{{.Digest}}' "docker://${image}:${tag}")
+            test "$actual" = "$digest"
+          done
+          echo "digest=${digest}" >> "$GITHUB_OUTPUT"
 
       # This section is optional and only needs to be enabled if you plan on distributing
       # your project for others to consume. You will need to create a public and private key
