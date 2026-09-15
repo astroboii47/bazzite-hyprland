@@ -1,0 +1,16 @@
+#!/usr/bin/bash
+set -euo pipefail
+
+picture="$(kdialog --title "Ryoku · Choose wallpaper" --getopenfilename "${HOME}/Pictures" "Images (*.jpg *.jpeg *.png *.webp)")" || exit 0
+[[ -n "$picture" ]] || exit 0
+
+config_dir="${XDG_CONFIG_HOME:-$HOME/.config}/hypr"
+mkdir -p "$config_dir"
+cat > "$config_dir/hyprpaper.conf" <<EOF
+preload = $picture
+wallpaper = ,$picture
+splash = false
+ipc = true
+EOF
+
+hyprctl hyprpaper reload ",$picture" >/dev/null

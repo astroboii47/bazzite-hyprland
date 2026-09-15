@@ -1,0 +1,22 @@
+#!/usr/bin/bash
+set -euo pipefail
+
+choice="$(printf '%s\n' 'Sumi · paper and ink' 'Forest · showroom 01' 'Cobalt · blue hour' 'Sakura · muted pink' | fuzzel --dmenu --prompt='  THEME  /  ')" || exit 0
+target_dir="${XDG_CONFIG_HOME:-$HOME/.config}/quickshell/bazzite-ryoku"
+mkdir -p "$target_dir"
+cp /etc/xdg/quickshell/bazzite-ryoku/shell.qml "$target_dir/shell.qml"
+
+case "$choice" in
+  "Forest"*)
+    sed -i 's/#e8e1d5/#d8d8c8/g; s/#20221f/#172019/g; s/#66665f/#687166/g; s/#8b887f/#7f897d/g; s/#b74c3d/#a94b3c/g' "$target_dir/shell.qml"
+    ;;
+  "Cobalt"*)
+    sed -i 's/#e8e1d5/#dce3e8/g; s/#20221f/#17232f/g; s/#66665f/#63717d/g; s/#8b887f/#7a8996/g; s/#b74c3d/#376f9f/g' "$target_dir/shell.qml"
+    ;;
+  "Sakura"*)
+    sed -i 's/#e8e1d5/#eadde0/g; s/#20221f/#2a2024/g; s/#66665f/#78656c/g; s/#8b887f/#947e86/g; s/#b74c3d/#ae526f/g' "$target_dir/shell.qml"
+    ;;
+esac
+
+pkill -x qs 2>/dev/null || true
+nohup qs -p "$target_dir/shell.qml" >/dev/null 2>&1 &

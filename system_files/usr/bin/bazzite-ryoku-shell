@@ -1,2 +1,7 @@
 #!/usr/bin/bash
-exec qs -p /etc/xdg/quickshell/bazzite-ryoku/shell.qml || exec waybar
+user_shell="${XDG_CONFIG_HOME:-$HOME/.config}/quickshell/bazzite-ryoku/shell.qml"
+shell_path="/etc/xdg/quickshell/bazzite-ryoku/shell.qml"
+if [[ -f "$user_shell" ]]; then
+  shell_path="$user_shell"
+fi
+exec qs -p "$shell_path" || exec waybar

@@ -17,6 +17,8 @@ dnf5 install -y \
   brightnessctl \
   cliphist \
   fuzzel \
+  fprintd \
+  fprintd-pam \
   grim \
   hypridle \
   hyprland \
@@ -46,6 +48,8 @@ test -x /usr/libexec/xdg-desktop-portal-hyprland
 test -f /etc/xdg/hypr/hyprland.lua
 test -f /etc/xdg/quickshell/bazzite-ryoku/shell.qml
 test -x /usr/bin/bazzite-ryoku-shell
+test -x /usr/bin/bazzite-ryoku-theme
+test -x /usr/bin/bazzite-ryoku-wallpaper
 test -f /etc/xdg/waybar/config.jsonc
 
 # Validate the QML during the image build when Fedora's Qt tooling is present.
