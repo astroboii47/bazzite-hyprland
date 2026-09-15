@@ -17,7 +17,7 @@ env:
   IMAGE_REGISTRY: "ghcr.io/${{ github.repository_owner }}"  # do not edit
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}-${{ inputs.brand_name}}-${{ inputs.stream_name }}
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
   cancel-in-progress: true
 
 jobs:
@@ -34,6 +34,14 @@ jobs:
       # These stage versions are pinned by https://github.com/renovatebot/renovate
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Check signing configuration
+        if: github.event_name != 'pull_request' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+        env:
+          SIGNING_SECRET: ${{ secrets.SIGNING_SECRET }}
+        run: |
+          test -n "$SIGNING_SECRET" || { echo 'Missing SIGNING_SECRET repository secret'; exit 1; }
+          test -s cosign.pub
 
       - name: Maximize build space
         uses: ublue-os/remove-unwanted-software@695eb75bc387dbcd9685a8e72d23439d8686cba6
@@ -162,3 +170,10 @@ jobs:
           # use old bundle format, so we can use newer cosign 3.X.X instead of 2.X.X
           cosign sign -y --new-bundle-format=false --use-signing-config=false --key env://COSIGN_PRIVATE_KEY ${IMAGE_REGISTRY}/${IMAGE_NAME}@${DIGEST}
 
+
+      - name: Verify published image signature
+        if: github.event_name != 'pull_request' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+        env:
+          DIGEST: ${{ steps.push-image.outputs.digest }}
+        run: |
+          cosign verify --key cosign.pub "${IMAGE_REGISTRY}/${IMAGE_NAME}@${DIGEST}"
