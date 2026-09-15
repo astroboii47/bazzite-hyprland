@@ -3,12 +3,13 @@
 Personal custom Bazzite image, created from the official
 [Universal Blue image-template](https://github.com/ublue-os/image-template).
 
-## Current stage: minimal baseline
+## Current stage: installable Hyprland desktop
 
 - Base: `ghcr.io/ublue-os/bazzite:stable` (tracks the stable tag).
 - Output: `ghcr.io/astroboii47/bazzite-hyprland:latest`.
-- No extra packages or services. Hyprland is **not installed yet**.
-- The existing Bazzite desktop remains included.
+- Hyprland, UWSM, portals, locking, idle/suspend, notifications, clipboard,
+  screenshots, launcher, status bar, laptop media keys, and Quickshell are included.
+- The existing Bazzite KDE desktop remains available in SDDM as a fallback.
 - No personal data, credentials, or laptop configuration belong in this repository.
 
 The template's sample tmux installation and podman.socket enablement were removed.
@@ -25,7 +26,7 @@ and commit-specific tags alongside `latest`. The image is pushed once; aliases
 copy the published manifest and are checked against the same digest before it is
 signed. This keeps every tag covered by the same signature.
 
-The minimal baseline preserves Bazzite's existing layers. Optional rechunking
+The image preserves Bazzite's existing layers. Optional rechunking
 recipes remain available in the Justfile for later customization.
 
 Only default-branch builds publish and sign. Pull requests build without publishing
@@ -38,10 +39,10 @@ private-key backup secure; it is excluded by `.gitignore`.
 
 ## Next safe step
 
-After a successful baseline build and signature verification, add a minimal
-Hyprland session in a separate change, preserving the existing Bazzite desktop as
-a fallback. Validate the image in a virtual machine before considering laptop
-installation. This repository setup does not modify or rebase any laptop.
+After a successful build and signature verification, switch the Dell from its
+current Bazzite deployment to this image. The switch creates a new deployment;
+the current deployment remains available for rollback. At the login screen,
+choose **Hyprland (UWSM-managed)**. KDE remains available as a fallback.
 
 Optional disk/ISO tooling is inherited from the template and is not part of the
 initial validation. `disk_config/iso.toml` uses the KDE installer configuration and
