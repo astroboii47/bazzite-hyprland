@@ -20,6 +20,7 @@ dnf5 install -y \
   grim \
   hypridle \
   hyprland \
+  hyprland-guiutils \
   hyprlock \
   hyprpaper \
   hyprpolkitagent \
