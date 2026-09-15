@@ -1,0 +1,15 @@
+[Unit]
+Description=Ryoku wallpaper service
+PartOf=graphical-session.target
+After=graphical-session.target
+
+[Service]
+Environment=RYOKU_SHELL_DIR=/usr/share/ryoku-source/ryoku/shell
+Environment=RYOGAMI_WALL_UI=/usr/share/ryogami
+ExecStart=/usr/bin/ryogami
+Restart=on-failure
+RestartSec=2
+
+[Install]
+WantedBy=graphical-session.target
+

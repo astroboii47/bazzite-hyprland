@@ -23,7 +23,10 @@ dnf5 swap -y libfprint libfprint-tod
 # fallback in SDDM.
 dnf5 install -y \
   brightnessctl \
+  cmake \
   cliphist \
+  gcc-c++ \
+  golang \
   fuzzel \
   fprintd \
   fprintd-pam \
@@ -39,20 +42,31 @@ dnf5 install -y \
   hyprshutdown \
   hyprshot \
   network-manager-applet \
+  ninja-build \
   pavucontrol \
   playerctl \
   quickshell \
+  qt6-qtbase-devel \
+  qt6-qtdeclarative-devel \
+  qt6-qtmultimedia-devel \
+  qt6-qtshadertools-devel \
   slurp \
   swaync \
   uwsm \
   waybar \
+  wayland-devel \
+  wayland-protocols-devel \
   wl-clipboard \
   xdg-desktop-portal-hyprland
+
+/ctx/install-ryoku.sh
 
 dnf5 clean all
 
 # Catch missing session, portal, and configuration files during the image build.
 test -x /usr/bin/Hyprland
+test -x /usr/bin/ryoku-shell
+test -f /usr/lib/systemd/user/ryoku-shell.service
 test -f /usr/lib64/libfprint-2-tod.so.1
 test -d /usr/lib64/libfprint-2/tod-1
 test -f /usr/lib64/libfprint-2/tod-1/libfprint-2-tod-1-broadcom.so
