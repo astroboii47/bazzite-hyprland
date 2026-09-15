@@ -70,7 +70,7 @@ ShellRoot {
                         }
                     }
                 }
-                Text { anchors { horizontalCenter: parent.horizontalCenter; bottom: parent.bottom; bottomMargin: 66 }; rotation: -90; text: "BAZZITE  /  LATITUDE"; color: root.inkDim; font.family: "monospace"; font.letterSpacing: 3; font.pixelSize: 9 }
+                Text { anchors { horizontalCenter: parent.horizontalCenter; bottom: parent.bottom; bottomMargin: 66 } rotation: -90; text: "BAZZITE  /  LATITUDE"; color: root.inkDim; font.family: "monospace"; font.letterSpacing: 3; font.pixelSize: 9 }
             }
 
             PanelWindow {
@@ -80,8 +80,8 @@ ShellRoot {
                 color: root.ink
                 WlrLayershell.namespace: "bazzite-ryoku-bottom"
                 WlrLayershell.layer: WlrLayer.Top
-                Text { anchors { left: parent.left; leftMargin: 62; verticalCenter: parent.verticalCenter }; text: "力  FLOW WITH INTENT"; color: root.paper; font.family: "monospace"; font.letterSpacing: 2; font.pixelSize: 9 }
-                Rectangle { anchors { right: parent.right; rightMargin: 18; verticalCenter: parent.verticalCenter }; width: 7; height: 7; radius: 4; color: root.red }
+                Text { anchors { left: parent.left; leftMargin: 62; verticalCenter: parent.verticalCenter } text: "力  FLOW WITH INTENT"; color: root.paper; font.family: "monospace"; font.letterSpacing: 2; font.pixelSize: 9 }
+                Rectangle { anchors { right: parent.right; rightMargin: 18; verticalCenter: parent.verticalCenter } width: 7; height: 7; radius: 4; color: root.red }
             }
         }
     }
