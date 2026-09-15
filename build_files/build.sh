@@ -27,6 +27,7 @@ dnf5 install -y \
   hyprshutdown \
   hyprshot \
   network-manager-applet \
+  pavucontrol \
   playerctl \
   quickshell \
   slurp \
@@ -46,3 +47,8 @@ test -f /etc/xdg/hypr/hyprland.lua
 test -f /etc/xdg/quickshell/bazzite-ryoku/shell.qml
 test -x /usr/bin/bazzite-ryoku-shell
 test -f /etc/xdg/waybar/config.jsonc
+
+# Validate the QML during the image build when Fedora's Qt tooling is present.
+if command -v qmllint >/dev/null 2>&1; then
+  qmllint /etc/xdg/quickshell/bazzite-ryoku/shell.qml
+fi
