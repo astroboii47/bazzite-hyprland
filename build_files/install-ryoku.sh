@@ -5,6 +5,10 @@ set -euo pipefail
 ryoku_commit="e76a32d474a467d45e0dc67a46d1c6057d024f5b"
 src="$(mktemp -d)"
 trap 'rm -rf "$src"' EXIT
+export GOCACHE=/tmp/ryoku-go-cache
+export GOPATH=/tmp/ryoku-go
+export HOME=/tmp/ryoku-build-home
+mkdir -p "$GOCACHE" "$GOPATH" "$HOME"
 
 curl --fail --location --silent --show-error \
   "https://github.com/Ryoku-dev/ryoku-arch/archive/${ryoku_commit}.tar.gz" \
