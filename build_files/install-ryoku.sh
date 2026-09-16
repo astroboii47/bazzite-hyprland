@@ -89,6 +89,55 @@ install -Dm644 "$src/ryoku/hub/ryoku-hub.desktop" /usr/share/applications/ryoku-
 install -Dm644 "$src/ryoku/assets/brand/logo.svg" /usr/share/icons/hicolor/scalable/apps/ryoku-hub.svg
 install -Dm644 "$src/ryoku/shell/portals/hyprland-portals.conf" /etc/xdg/xdg-desktop-portal/hyprland-portals.conf
 
+# Ship Ryoku's complete Hyprland configuration as the single source of truth.
+# The prior hand-written starter config bypassed `settings.lua`, which meant
+# Hub changes and wallpaper colours were immediately overwritten by defaults.
+install -d /usr/share/ryoku/hyprland-default /usr/lib/systemd/user
+cp -a "$src/ryoku/hyprland/." /usr/share/ryoku/hyprland-default/
+cp -a "$src/ryoku/shell/systemd/user/." /usr/lib/systemd/user/
+# The portable image stores QML in /usr/share/ryoku-source rather than Arch's
+# package path.  Keep those two unit overrides after copying upstream's units.
+install -Dm644 /ctx/system_files/usr/lib/systemd/user/ryoku-shell.service /usr/lib/systemd/user/ryoku-shell.service
+install -Dm644 /ctx/system_files/usr/lib/systemd/user/ryogami.service /usr/lib/systemd/user/ryogami.service
+
+# Keep the showroom wallpaper workflow the user requested: compact picker,
+# random wallpaper, then the separate full Ryogami library.
+sed -i \
+  's|hl.bind(K(mod .. " + W"),         hl.dsp.exec_cmd("ryogami wallpaper ui"))|hl.bind(K(mod .. " + W"),         hl.dsp.global("ryoku:wallpaper-menu"))|' \
+  /usr/share/ryoku/hyprland-default/modules/binds.lua
+sed -i \
+  '/hl.bind(K(mod .. " + SHIFT + W"), hl.dsp.exec_cmd("ryogami wallpaper random"))/a hl.bind(K(mod .. " + ALT + W"),   hl.dsp.exec_cmd("ryogami wallpaper ui"))' \
+  /usr/share/ryoku/hyprland-default/modules/binds.lua
+
+# Build the two Ryoku plugin packs against the exact Hyprland ABI in this
+# image.  They are optional effects, but the Hub exposes them and the earlier
+# image falsely reported the packages as missing because it shipped no plugin
+# binaries at all.
+plugin_dir=/usr/lib/hyprland/plugins
+install -d "$plugin_dir"
+hypr_version="$(pkg-config --modversion hyprland)"
+plugins_src="$src/hyprland-plugins"
+git clone --depth 1 https://github.com/hyprwm/hyprland-plugins.git "$plugins_src"
+plugins_commit="$(grep -F "$hypr_version" "$plugins_src/hyprpm.toml" | grep -oE '[0-9a-f]{40}' | sed -n '2p')"
+if [[ -n "$plugins_commit" ]]; then
+  git -C "$plugins_src" fetch --depth 1 origin "$plugins_commit"
+  git -C "$plugins_src" checkout -q "$plugins_commit"
+fi
+make -C "$plugins_src/hyprbars" all
+make -C "$plugins_src/hyprfocus" all
+install -Dm755 "$plugins_src/hyprbars/hyprbars.so" "$plugin_dir/hyprbars.so"
+install -Dm755 "$plugins_src/hyprfocus/hyprfocus.so" "$plugin_dir/hyprfocus.so"
+
+glass_src="$src/hyprglass"
+git clone --depth 1 https://github.com/hyprnux/hyprglass.git "$glass_src"
+glass_commit="$(grep -F "$hypr_version" "$glass_src/hyprpm.toml" | grep -oE '[0-9a-f]{40}' | sed -n '2p')"
+if [[ -n "$glass_commit" ]]; then
+  git -C "$glass_src" fetch --depth 1 origin "$glass_commit"
+  git -C "$glass_src" checkout -q "$glass_commit"
+fi
+make -C "$glass_src"
+install -Dm755 "$glass_src/hyprglass.so" "$plugin_dir/hyprglass.so"
+
 install -Dm755 "$src/ryoku/shell/scripts/ryoku-reload-cover" /usr/bin/ryoku-reload-cover
 install -Dm755 "$src/ryoku/shell/scripts/ryostage" /usr/bin/ryostage
 install -Dm755 "$src/ryoku/shell/scripts/ryoku-eq" /usr/bin/ryoku-eq
@@ -137,6 +186,13 @@ test -f /usr/share/ryoku-source/ryoku/shell/quickshell/shell/shell.qml
 test -x /usr/share/ryoku-source/ryoku/shell/ipc/ryoku-shell
 grep -Fq 'df -B1 --output=used,size \"$HOME\"' /usr/share/ryoku-source/ryoku/shell/quickshell/shell/services/StatsFeed.qml
 test -f /usr/share/ryoku-source/ryoku/hub/quickshell/shell.qml
+test -f /usr/share/ryoku/hyprland-default/modules/autostart.lua
+test -f /usr/share/ryoku/hyprland-default/modules/decoration.lua
+grep -q 'ryoku:wallpaper-menu' /usr/share/ryoku/hyprland-default/modules/binds.lua
+grep -q 'ryogami wallpaper ui' /usr/share/ryoku/hyprland-default/modules/binds.lua
+test -f /usr/lib/hyprland/plugins/hyprbars.so
+test -f /usr/lib/hyprland/plugins/hyprfocus.so
+test -f /usr/lib/hyprland/plugins/hyprglass.so
 grep -q 'pam_fprintd.so' /usr/share/ryoku/lockscreen/qylock/quickshell-lockscreen/assets/pam/ryoku-lock
 ! grep -q 'pam_fprintd_grosshack.so' /usr/share/ryoku/lockscreen/qylock/quickshell-lockscreen/assets/pam/ryoku-lock
 fc-match -f '%{family}' 'Space Grotesk' | grep -q '^Space Grotesk'

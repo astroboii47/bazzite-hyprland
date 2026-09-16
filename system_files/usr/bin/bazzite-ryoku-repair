@@ -3,16 +3,8 @@ set -euo pipefail
 
 if [[ "${1:-}" == "--reset-config" ]]; then
   config_dir="${XDG_CONFIG_HOME:-$HOME/.config}/hypr"
-  active="$config_dir/hyprland.lua"
   mkdir -p "$config_dir"
-  if [[ -e "$active" ]]; then
-    backup="$active.before-bazzite-ryoku-$(date +%Y%m%d-%H%M%S)"
-    cp -a "$active" "$backup"
-    printf 'Backed up the previous Hyprland configuration to %s\n' "$backup"
-  fi
-  cp /etc/xdg/hypr/hyprland.lua "$active"
-  mkdir -p "$config_dir/modules"
-  ln -sfn /etc/xdg/hypr/hyprland.lua "$config_dir/modules/binds.lua"
+  bazzite-ryoku-first-login --refresh-hypr
   hyprctl reload config-only 2>/dev/null || hyprctl reload
 fi
 

@@ -33,6 +33,7 @@ dnf5 install -y \
   cava \
   cmake \
   cliphist \
+  cairo-devel \
   gcc-c++ \
   golang \
   fuzzel \
@@ -54,14 +55,20 @@ dnf5 install -y \
   iw \
   jq \
   libqalculate \
+  libdrm-devel \
+  libinput-devel \
+  libxkbcommon-devel \
   matugen \
   network-manager-applet \
   nftables \
   ninja-build \
   pavucontrol \
+  pango-devel \
   papirus-icon-theme \
   pciutils \
   playerctl \
+  pkgconf-pkg-config \
+  pixman-devel \
   qalculate \
   quickshell \
   qt6-qtbase-devel \
@@ -70,13 +77,11 @@ dnf5 install -y \
   qt6-qtsvg \
   qt6-qtshadertools-devel \
   slurp \
-  swaync \
   tesseract \
   tesseract-langpack-eng \
   uwsm \
   unzip \
   upower \
-  waybar \
   wayland-devel \
   wayland-protocols-devel \
   wdisplays \
@@ -86,6 +91,11 @@ dnf5 install -y \
   zbar \
   ddcutil \
   xdg-desktop-portal-hyprland
+
+# Ryoku owns the notification server and shell surfaces.  The early image
+# installed SwayNotificationCenter and Waybar as fallback UI; either can take
+# over a session and produce the oversized, unthemed popups the user saw.
+dnf5 remove -y swaync waybar || true
 
 /ctx/install-ryoku.sh
 
@@ -121,6 +131,10 @@ test -f /var/lib/fprint/fw/bcmDeviceFirmwareCitadel_7.bin
 test -f /usr/share/wayland-sessions/hyprland-uwsm.desktop
 test -x /usr/libexec/xdg-desktop-portal-hyprland
 test -f /etc/xdg/hypr/hyprland.lua
+test -f /usr/share/ryoku/hyprland-default/hyprland.lua
+test -f /usr/lib/systemd/user/ryoku-shell.service
+test -f /usr/lib/systemd/user/ryogami.service
+test ! -x /usr/bin/swaync
 test -f /usr/share/icons/Papirus/index.theme
 grep -q '^    lock_cmd = ryoku-shell lock$' /etc/xdg/hypr/hypridle.conf
 grep -q '^    before_sleep_cmd = ryoku-shell lock$' /etc/xdg/hypr/hypridle.conf

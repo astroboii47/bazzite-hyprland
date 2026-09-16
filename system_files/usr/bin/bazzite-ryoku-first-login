@@ -6,13 +6,34 @@ wall_config="$HOME/.config/ryogami-wall"
 lock="$HOME/.local/share/quickshell-lockscreen"
 themes="$HOME/.local/share/qylock/themes"
 
-mkdir -p "$walls" "$wall_config" "$HOME/.local/share" "$HOME/.config/qylock" "$HOME/.config/hypr/modules" "$HOME/.config/gtk-3.0"
+mkdir -p "$walls" "$wall_config" "$HOME/.local/share" "$HOME/.config/qylock" "$HOME/.config/hypr" "$HOME/.config/gtk-3.0"
 
-# Ryoku Hub builds its System shortcut list from this path. This image keeps
-# the live binds in the single system Hyprland file, so expose that exact file
-# at the location the Hub expects instead of maintaining a second, drifting
-# shortcut list.
-ln -sfn /etc/xdg/hypr/hyprland.lua "$HOME/.config/hypr/modules/binds.lua"
+# Install the real Ryoku configuration once per user.  The first prototype
+# replaced this tree with a small independent config, so Hub settings, dynamic
+# palette updates, plugins and cursor choices had no authoritative home.
+hypr_config="$HOME/.config/hypr"
+hypr_defaults="/usr/share/ryoku/hyprland-default"
+hypr_marker="$hypr_config/.bazzite-ryoku-upstream"
+refresh_hypr() {
+  if [[ -e "$hypr_config/hyprland.lua" ]]; then
+    backup="$hypr_config/hyprland.lua.before-ryoku-$(date +%Y%m%d-%H%M%S)"
+    cp -a "$hypr_config/hyprland.lua" "$backup"
+  fi
+  cp -a "$hypr_defaults/hyprland.lua" "$hypr_config/hyprland.lua"
+  cp -a "$hypr_defaults/modules" "$hypr_config/"
+  cp -a "$hypr_defaults/scripts" "$hypr_config/"
+  for file in hypridle.conf xdph.conf monitors_user.lua.example; do
+    cp -a "$hypr_defaults/$file" "$hypr_config/$file"
+  done
+  for file in keyboard.lua gpu.lua monitors.lua user.lua; do
+    [[ -e "$hypr_config/$file" ]] || cp -a "$hypr_defaults/$file" "$hypr_config/$file"
+  done
+  touch "$hypr_marker"
+}
+
+if [[ "${1:-}" == "--refresh-hypr" || ! -e "$hypr_marker" ]]; then
+  refresh_hypr
+fi
 
 # Ryoku's dock and launcher resolve desktop icons through the active GTK theme.
 # Use the icon set its layouts were designed and tested with.
