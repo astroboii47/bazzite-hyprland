@@ -136,6 +136,8 @@ test -f /usr/share/icons/hicolor/scalable/apps/ryoku-wallpapers.svg
 test -f /usr/share/applications/ryovm.desktop
 test -f /usr/share/applications/ryotunes.desktop
 grep -q 'ryoku-shell menu wallpaper' /etc/xdg/hypr/hyprland.lua
+grep -q 'ryoku-volume up' /etc/xdg/hypr/hyprland.lua
+grep -q 'ryoku-shell brightness up' /etc/xdg/hypr/hyprland.lua
 grep -q 'config.json.example' /usr/bin/bazzite-ryoku-first-login
 test -x /usr/bin/powerprofilesctl
 test -x /usr/bin/wdisplays

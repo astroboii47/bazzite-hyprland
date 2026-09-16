@@ -6,10 +6,10 @@ After=graphical-session.target
 [Service]
 Environment=RYOKU_SHELL_DIR=/usr/share/ryoku-source/ryoku/shell
 Environment=RYOGAMI_WALL_UI=/usr/share/ryogami
+Environment=QML2_IMPORT_PATH=/usr/lib/qt6/qml
 ExecStart=/usr/bin/ryogami
 Restart=on-failure
 RestartSec=2
 
 [Install]
 WantedBy=graphical-session.target
-
