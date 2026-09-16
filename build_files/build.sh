@@ -151,6 +151,7 @@ test -f /usr/lib64/libfprint-2-tod.so.1
 test -d /usr/lib64/libfprint-2/tod-1
 test -f /usr/lib64/libfprint-2/tod-1/libfprint-2-tod-1-broadcom.so
 test -f /var/lib/fprint/fw/bcmDeviceFirmwareCitadel_7.bin
+test -x /usr/lib/systemd/system-sleep/bazzite-fprintd-resume
 test -f /usr/share/wayland-sessions/hyprland-uwsm.desktop
 test -x /usr/libexec/xdg-desktop-portal-hyprland
 test -f /etc/xdg/hypr/hyprland.lua

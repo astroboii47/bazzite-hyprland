@@ -1,0 +1,11 @@
+#!/bin/sh
+# Broadcom ControlVault readers can remain present on USB after suspend while
+# their firmware session is no longer usable. Restart fprintd only after wake so
+# the lockscreen can talk to the enrolled reader again.
+case "$1/$2" in
+  post/*)
+    # Give the reader a moment to finish USB resume before fprintd opens it.
+    sleep 1
+    /usr/bin/systemctl restart fprintd.service
+    ;;
+esac
