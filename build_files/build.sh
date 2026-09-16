@@ -34,6 +34,7 @@ dnf5 install -y \
   cmake \
   cliphist \
   cairo-devel \
+  cargo \
   gcc-c++ \
   golang \
   fuzzel \
@@ -76,6 +77,7 @@ dnf5 install -y \
   pixman-devel \
   qalculate \
   quickshell \
+  rust \
   qt6-qtbase-devel \
   qt6-qtdeclarative-devel \
   qt6-qtmultimedia-devel \

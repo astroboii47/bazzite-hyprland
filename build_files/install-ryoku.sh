@@ -171,6 +171,24 @@ exec /usr/libexec/ryotunes-bin "$@"
 EOF
 chmod 755 /usr/bin/ryotunes
 
+# The release daemon is compiled against a newer glibc than Bazzite stable.
+# Rebuild the daemon and its control client inside this image so they link to
+# the exact runtime the laptop will boot.
+ryotunes_source="$src/ryotunes-source"
+mkdir -p "$ryotunes_source"
+curl --fail --location --silent --show-error \
+  "https://github.com/ryoku-dev/ryotunes/archive/refs/tags/v1.0.6.tar.gz" \
+  | tar -xz --strip-components=1 -C "$ryotunes_source"
+(cd "$ryotunes_source" && cargo build --release -p ryotunesd -p ryotunes-cli)
+install -Dm755 "$ryotunes_source/target/release/ryotunesd" /usr/bin/ryotunesd
+install -Dm755 "$ryotunes_source/target/release/ryotunes-cli" /usr/bin/ryotunes-cli
+cat > /usr/bin/ryotunes <<'EOF'
+#!/bin/sh
+systemctl --user start ryotunesd.socket
+exec /usr/bin/ryotunes-cli show
+EOF
+chmod 755 /usr/bin/ryotunes
+
 # Ryoku's default pointer is Bibata Modern Ice: a compact white, rounded arrow
 # with a dark edge. The upstream Arch package is not available to Fedora, so
 # install the official XCursor release directly.
