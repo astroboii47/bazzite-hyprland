@@ -65,6 +65,7 @@ dnf5 install -y \
   ninja-build \
   pavucontrol \
   pango-devel \
+  patch \
   papirus-icon-theme \
   pciutils \
   playerctl \
