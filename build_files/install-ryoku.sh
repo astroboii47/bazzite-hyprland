@@ -67,8 +67,21 @@ fc-cache -f
 # maintenance. Build the pinned CLI from the same source as the shell.
 (cd "$src/ryoku/cli" && CGO_ENABLED=0 go build -trimpath -mod=vendor -o /usr/bin/ryoku .)
 
-# RyoVM is Ryoku's machine hub. Fedora ships Quickemu natively, so the full
-# upstream client and engine can run here without the Arch/AUR setup path.
+# RyoVM is Ryoku's machine hub. Bazzite intentionally excludes the Mesa demo
+# package required by Fedora's Quickemu RPM. Install the upstream scripts rather
+# than overriding that graphics-stack protection just for a GL diagnostic tool.
+quickemu_version="4.9.9"
+quickemu_src="$src/quickemu"
+mkdir -p "$quickemu_src"
+curl --fail --location --silent --show-error \
+  "https://github.com/quickemu-project/quickemu/archive/refs/tags/${quickemu_version}.tar.gz" \
+  | tar -xz --strip-components=1 -C "$quickemu_src"
+install -Dm755 "$quickemu_src/quickemu" /usr/bin/quickemu
+install -Dm755 "$quickemu_src/quickget" /usr/bin/quickget
+install -Dm755 "$quickemu_src/quickreport" /usr/bin/quickreport
+
+# RyoVM's full upstream client and engine use the scripts above plus Fedora's
+# QEMU and SPICE runtime packages.
 (cd "$src/ryoku/apps/ryovm/fetch" && CGO_ENABLED=0 go build -trimpath -o /usr/bin/ryovm-fetch .)
 (cd "$src/ryoku/apps/ryovm/mon" && CGO_ENABLED=0 go build -trimpath -o /usr/bin/ryovm-mon .)
 (cd "$src/ryoku/apps/ryovm/remote" && CGO_ENABLED=0 go build -trimpath -o /usr/bin/ryossh .)
@@ -79,35 +92,25 @@ cp -a "$src/ryoku/apps/ryovm/quickshell/." /etc/xdg/quickshell/ryovm/
 install -Dm644 "$src/ryoku/apps/ryovm/ryovm.desktop" /usr/share/applications/ryovm.desktop
 install -Dm644 "$src/ryoku/apps/ryovm/quickshell/logo.svg" /usr/share/icons/hicolor/scalable/apps/ryovm.svg
 
-# Ryotunes is released upstream as an Arch package, but it also publishes the
-# complete GPL source. Build its native Rust daemon for Fedora and ship the
-# official Quickshell client, skins and user units rather than forcing pacman
-# packages into this bootc image.
+# Ryotunes publishes its only supported runtime as an Arch package. Extract its
+# official, checksummed runtime payload instead of compiling against Bazzite's
+# protected Mesa development stack. Runtime library checks below keep this from
+# publishing if the upstream binary cannot run on this Fedora base.
 ryotunes_version="1.0.6"
-ryotunes_src="$src/ryotunes"
-mkdir -p "$ryotunes_src"
+ryotunes_pkg_name="ryotunes-${ryotunes_version}-1-x86_64.pkg.tar.zst"
+ryotunes_pkg="$src/$ryotunes_pkg_name"
+ryotunes_sum="$src/$ryotunes_pkg_name.sha256"
+ryotunes_root="$src/ryotunes-root"
 curl --fail --location --silent --show-error \
-  "https://github.com/ryoku-dev/ryotunes/releases/download/v${ryotunes_version}/ryotunes-${ryotunes_version}.tar.gz" \
-  | tar -xz --strip-components=1 -C "$ryotunes_src"
-(cd "$ryotunes_src" && cargo build --release --locked --package ryotunes --package ryotunesd --package ryotunes-cli)
-install -Dm755 "$ryotunes_src/target/release/ryotunes" /usr/bin/ryotunes
-install -Dm755 "$ryotunes_src/target/release/ryotunesd" /usr/bin/ryotunesd
-install -Dm755 "$ryotunes_src/target/release/ryotunes-cli" /usr/bin/ryotunes-cli
-install -Dm755 "$ryotunes_src/packaging/linux/ryotunes-qml" /usr/bin/ryotunes-qml
-install -d /usr/share/ryotunes/client /usr/share/ryotunes/skins /usr/share/ryotunes/matugen
-cp -a "$ryotunes_src/client/." /usr/share/ryotunes/client/
-rm -rf /usr/share/ryotunes/client/tests
-cp -a "$ryotunes_src/skins/." /usr/share/ryotunes/skins/
-install -Dm644 "$ryotunes_src/matugen/ryotunes.json" /usr/share/ryotunes/matugen/ryotunes.json
-install -Dm644 "$ryotunes_src/packaging/linux/ryotunesd.socket" /usr/lib/systemd/user/ryotunesd.socket
-install -Dm644 "$ryotunes_src/packaging/linux/ryotunesd.service" /usr/lib/systemd/user/ryotunesd.service
-install -Dm644 "$ryotunes_src/packaging/linux/90-ryotunes.preset" /usr/lib/systemd/user-preset/90-ryotunes.preset
-install -Dm644 "$ryotunes_src/packaging/linux/ryotunes.desktop" /usr/share/applications/ryotunes.desktop
-for size in 32x32 64x64 128x128; do
-  install -Dm644 "$ryotunes_src/src-tauri/icons/${size}.png" "/usr/share/icons/hicolor/${size}/apps/ryotunes.png"
-done
-install -Dm644 "$ryotunes_src/src-tauri/icons/128x128@2x.png" /usr/share/icons/hicolor/256x256/apps/ryotunes.png
-install -Dm644 "$ryotunes_src/src-tauri/icons/icon.png" /usr/share/icons/hicolor/512x512/apps/ryotunes.png
+  "https://github.com/ryoku-dev/ryotunes/releases/download/v${ryotunes_version}/ryotunes-${ryotunes_version}-1-x86_64.pkg.tar.zst" \
+  -o "$ryotunes_pkg"
+curl --fail --location --silent --show-error \
+  "https://github.com/ryoku-dev/ryotunes/releases/download/v${ryotunes_version}/ryotunes-${ryotunes_version}-1-x86_64.pkg.tar.zst.sha256" \
+  -o "$ryotunes_sum"
+(cd "$src" && sha256sum -c "$(basename "$ryotunes_sum")")
+mkdir -p "$ryotunes_root"
+tar --zstd -xf "$ryotunes_pkg" -C "$ryotunes_root"
+cp -a "$ryotunes_root/usr/." /usr/
 
 # Ryogami's upstream daemon launches its wallpaper UI as `quickshell`, while
 # Fedora names the same executable `qs`.  Keep the upstream app intact and
@@ -246,6 +249,7 @@ test -x /usr/bin/ryotunes
 test -x /usr/bin/ryotunesd
 test -x /usr/bin/ryotunes-cli
 test -x /usr/bin/ryotunes-qml
+! ldd /usr/bin/ryotunesd | grep -q 'not found'
 test -x /usr/bin/quickshell
 test -x /usr/bin/ryoku-monitor
 test -x /usr/bin/ryoku-hw-backlight

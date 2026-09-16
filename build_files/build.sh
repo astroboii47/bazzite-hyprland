@@ -68,7 +68,9 @@ dnf5 install -y \
   papirus-icon-theme \
   pciutils \
   playerctl \
-  quickemu \
+  qemu-img \
+  qemu-system-x86 \
+  spice-gtk-tools \
   pkgconf-pkg-config \
   pixman-devel \
   qalculate \
@@ -78,11 +80,9 @@ dnf5 install -y \
   qt6-qtmultimedia-devel \
   qt6-qtsvg \
   qt6-qtshadertools-devel \
-  rust \
-  cargo \
-  mpv-devel \
-  webkit2gtk4.1-devel \
-  libappindicator-gtk3-devel \
+  mpv \
+  webkit2gtk4.1 \
+  libappindicator-gtk3 \
   yt-dlp \
   slurp \
   tesseract \
