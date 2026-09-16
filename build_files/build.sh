@@ -107,6 +107,7 @@ test -x /usr/bin/Hyprland
 test -x /usr/bin/ryoku-shell
 test -x /usr/bin/ryostore
 test -x /usr/bin/ryoku
+test -x /usr/bin/ryoku-volume
 test -x /usr/bin/ryoku-monitor
 test -x /usr/bin/ryoku-gpu
 test -x /usr/bin/ryoku-power

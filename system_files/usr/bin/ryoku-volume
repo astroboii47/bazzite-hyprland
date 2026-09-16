@@ -1,0 +1,14 @@
+#!/bin/bash
+set -euo pipefail
+
+# The upstream Hyprland bindings call this helper, which is normally supplied
+# by Ryoku's Arch desktop package. On Bazzite, route the same three actions to
+# the installed Ryoku shell controller so PipeWire changes and the themed OSD
+# are driven by one owner.
+case "${1:-}" in
+  up|down|mute) exec ryoku-shell audio "$1" ;;
+  *)
+    printf 'usage: ryoku-volume <up|down|mute>\n' >&2
+    exit 2
+    ;;
+esac
