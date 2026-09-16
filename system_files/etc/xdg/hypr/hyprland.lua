@@ -54,7 +54,7 @@ hl.animation({ leaf = "fade", enabled = true, speed = 4, bezier = "easeOut" })
 hl.animation({ leaf = "workspaces", enabled = true, speed = 4, bezier = "easeOut", style = "slide" })
 
 hl.on("hyprland.start", function()
-    hl.exec_cmd("systemctl --user daemon-reload; systemctl --user restart ryoku-shell.service ryogami.service")
+    hl.exec_cmd("bazzite-ryoku-first-login; systemctl --user daemon-reload; systemctl --user restart ryoku-shell.service ryogami.service")
     hl.exec_cmd("hypridle")
     hl.exec_cmd("hyprpolkitagent")
     hl.exec_cmd("nm-applet --indicator")

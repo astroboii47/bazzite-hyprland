@@ -66,6 +66,7 @@ dnf5 clean all
 # Catch missing session, portal, and configuration files during the image build.
 test -x /usr/bin/Hyprland
 test -x /usr/bin/ryoku-shell
+test -x /usr/bin/bazzite-ryoku-first-login
 test -f /usr/lib/systemd/user/ryoku-shell.service
 test -f /usr/lib64/libfprint-2-tod.so.1
 test -d /usr/lib64/libfprint-2/tod-1
