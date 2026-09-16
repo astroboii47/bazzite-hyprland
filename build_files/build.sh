@@ -37,6 +37,7 @@ dnf5 install -y \
   cargo \
   gcc-c++ \
   golang \
+  gtk3-devel \
   fuzzel \
   fprintd \
   fprintd-pam \
