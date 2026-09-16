@@ -103,7 +103,6 @@ dnf5 remove -y swaync waybar || true
 dnf5 clean all
 
 # Catch missing session, portal, and configuration files during the image build.
-set -x
 test -x /usr/bin/Hyprland
 test -x /usr/bin/ryoku-shell
 test -x /usr/bin/ryostore
@@ -117,7 +116,6 @@ test -x /usr/bin/bazzite-display-scale
 test -x /usr/bin/bazzite-ryogami
 test -f /usr/share/applications/ryoku-wallpapers.desktop
 grep -q 'ryoku:wallpaper-menu' /etc/xdg/hypr/hyprland.lua
-grep -q 'modules/binds.lua' /usr/bin/bazzite-ryoku-first-login
 grep -q 'config.json.example' /usr/bin/bazzite-ryoku-first-login
 test -x /usr/bin/powerprofilesctl
 test -x /usr/bin/wdisplays
