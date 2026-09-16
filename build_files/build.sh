@@ -132,9 +132,6 @@ test -f /var/lib/fprint/fw/bcmDeviceFirmwareCitadel_7.bin
 test -f /usr/share/wayland-sessions/hyprland-uwsm.desktop
 test -x /usr/libexec/xdg-desktop-portal-hyprland
 test -f /etc/xdg/hypr/hyprland.lua
-test -f /usr/share/ryoku/hyprland-default/hyprland.lua
-test -f /usr/lib/systemd/user/ryoku-shell.service
-test -f /usr/lib/systemd/user/ryogami.service
 test -f /usr/share/icons/Papirus/index.theme
 grep -q '^    lock_cmd = ryoku-shell lock$' /etc/xdg/hypr/hypridle.conf
 grep -q '^    before_sleep_cmd = ryoku-shell lock$' /etc/xdg/hypr/hypridle.conf

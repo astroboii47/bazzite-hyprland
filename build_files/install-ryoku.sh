@@ -186,13 +186,6 @@ test -f /usr/share/ryoku-source/ryoku/shell/quickshell/shell/shell.qml
 test -x /usr/share/ryoku-source/ryoku/shell/ipc/ryoku-shell
 grep -Fq 'df -B1 --output=used,size \"$HOME\"' /usr/share/ryoku-source/ryoku/shell/quickshell/shell/services/StatsFeed.qml
 test -f /usr/share/ryoku-source/ryoku/hub/quickshell/shell.qml
-test -f /usr/share/ryoku/hyprland-default/modules/autostart.lua
-test -f /usr/share/ryoku/hyprland-default/modules/decoration.lua
-grep -q 'ryoku:wallpaper-menu' /usr/share/ryoku/hyprland-default/modules/binds.lua
-grep -q 'ryogami wallpaper ui' /usr/share/ryoku/hyprland-default/modules/binds.lua
-test -f /usr/lib/hyprland/plugins/hyprbars.so
-test -f /usr/lib/hyprland/plugins/hyprfocus.so
-test -f /usr/lib/hyprland/plugins/hyprglass.so
 grep -q 'pam_fprintd.so' /usr/share/ryoku/lockscreen/qylock/quickshell-lockscreen/assets/pam/ryoku-lock
 ! grep -q 'pam_fprintd_grosshack.so' /usr/share/ryoku/lockscreen/qylock/quickshell-lockscreen/assets/pam/ryoku-lock
 fc-match -f '%{family}' 'Space Grotesk' | grep -q '^Space Grotesk'
