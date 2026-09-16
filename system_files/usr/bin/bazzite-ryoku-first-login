@@ -5,11 +5,17 @@ walls="$HOME/Pictures/Wallpapers"
 lock="$HOME/.local/share/quickshell-lockscreen"
 themes="$HOME/.local/share/qylock/themes"
 
-mkdir -p "$walls" "$HOME/.local/share" "$HOME/.config/qylock"
+mkdir -p "$walls" "$HOME/.local/share" "$HOME/.config/qylock" "$HOME/.config/hypr/modules"
+
+# Ryoku Hub builds its System shortcut list from this path. This image keeps
+# the live binds in the single system Hyprland file, so expose that exact file
+# at the location the Hub expects instead of maintaining a second, drifting
+# shortcut list.
+ln -sfn /etc/xdg/hypr/hyprland.lua "$HOME/.config/hypr/modules/binds.lua"
 
 # Ryoku's dock and launcher resolve desktop icons through the active GTK theme.
 # Use the icon set its layouts were designed and tested with.
-gsettings set org.gnome.desktop.interface icon-theme 'Papirus-Dark' 2>/dev/null || true
+gsettings set org.gnome.desktop.interface icon-theme 'Papirus' 2>/dev/null || true
 gsettings set org.gnome.desktop.interface cursor-size 18 2>/dev/null || true
 
 # KDE starts this compatibility bridge globally. Hyprland uses its native

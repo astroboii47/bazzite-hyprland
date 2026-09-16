@@ -103,13 +103,13 @@ test -x /usr/bin/bazzite-ryoku-first-login
 test -x /usr/bin/bazzite-ryoku-repair
 test -x /usr/bin/bazzite-display-scale
 test -x /usr/bin/bazzite-ryogami
+grep -q 'modules/binds.lua' /usr/bin/bazzite-ryoku-first-login
 test -x /usr/bin/powerprofilesctl
 test -x /usr/bin/wdisplays
 for tool in cava convert ddcutil hyprsunset jq powerprofilesctl qalc tesseract upower wf-recorder wtype zbarimg; do
   printf 'Validating runtime tool: %s\n' "$tool"
   command -v "$tool" >/dev/null
 done
-set -x
 test -f /usr/lib/systemd/user/ryoku-shell.service
 test -f /usr/lib64/libfprint-2-tod.so.1
 test -d /usr/lib64/libfprint-2/tod-1
@@ -118,7 +118,7 @@ test -f /var/lib/fprint/fw/bcmDeviceFirmwareCitadel_7.bin
 test -f /usr/share/wayland-sessions/hyprland-uwsm.desktop
 test -x /usr/libexec/xdg-desktop-portal-hyprland
 test -f /etc/xdg/hypr/hyprland.lua
-test -f /usr/share/icons/Papirus-Dark/index.theme
+test -f /usr/share/icons/Papirus/index.theme
 grep -q '^    lock_cmd = ryoku-shell lock$' /etc/xdg/hypr/hypridle.conf
 grep -q '^    before_sleep_cmd = ryoku-shell lock$' /etc/xdg/hypr/hypridle.conf
 test ! -e /etc/xdg/quickshell/bazzite-ryoku
@@ -130,4 +130,3 @@ grep -q '^Exec=.*qs -c ryostore$' /usr/share/applications/ryostore.desktop
 grep -q '^Exec=ryoku-shell hub open$' /usr/share/applications/ryoku-hub.desktop
 grep -q '^org.freedesktop.impl.portal.ScreenCast=hyprland' /etc/xdg/xdg-desktop-portal/hyprland-portals.conf
 test -f /etc/xdg/waybar/config.jsonc
-set +x

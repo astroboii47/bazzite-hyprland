@@ -11,6 +11,8 @@ if [[ "${1:-}" == "--reset-config" ]]; then
     printf 'Backed up the previous Hyprland configuration to %s\n' "$backup"
   fi
   cp /etc/xdg/hypr/hyprland.lua "$active"
+  mkdir -p "$config_dir/modules"
+  ln -sfn /etc/xdg/hypr/hyprland.lua "$config_dir/modules/binds.lua"
   hyprctl reload config-only 2>/dev/null || hyprctl reload
 fi
 
