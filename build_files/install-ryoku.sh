@@ -14,6 +14,39 @@ curl --fail --location --silent --show-error \
   "https://github.com/Ryoku-dev/ryoku-arch/archive/${ryoku_commit}.tar.gz" \
   | tar -xz --strip-components=1 -C "$src"
 
+# Ryoku's geometry assumes its brand and icon fonts. Without them Qt silently
+# substitutes wider system faces, making the bar spacing and symbols look wrong.
+google_fonts_commit="1ac2012c34919f5fa2675aacf723fa98edb30b5f"
+material_icons_commit="40a7a292a79d9394157e1ea24f83d52d5e17c556"
+nerd_fonts_version="3.5.1"
+font_dir="/usr/share/fonts/ryoku"
+install -d "$font_dir" /usr/share/licenses/ryoku-fonts
+curl --fail --location --silent --show-error \
+  "https://raw.githubusercontent.com/google/fonts/${google_fonts_commit}/ofl/spacegrotesk/SpaceGrotesk%5Bwght%5D.ttf" \
+  -o "$font_dir/SpaceGrotesk.ttf"
+curl --fail --location --silent --show-error \
+  "https://raw.githubusercontent.com/google/fonts/${google_fonts_commit}/ofl/fraunces/Fraunces%5BSOFT%2CWONK%2Copsz%2Cwght%5D.ttf" \
+  -o "$font_dir/Fraunces.ttf"
+curl --fail --location --silent --show-error \
+  "https://raw.githubusercontent.com/google/fonts/${google_fonts_commit}/ofl/inter/Inter%5Bopsz%2Cwght%5D.ttf" \
+  -o "$font_dir/Inter.ttf"
+curl --fail --location --silent --show-error \
+  "https://raw.githubusercontent.com/google/material-design-icons/${material_icons_commit}/variablefont/MaterialSymbolsRounded%5BFILL%2CGRAD%2Copsz%2Cwght%5D.ttf" \
+  -o "$font_dir/MaterialSymbolsRounded.ttf"
+for family in SpaceMono JetBrainsMono; do
+  curl --fail --location --silent --show-error \
+    "https://github.com/ryanoasis/nerd-fonts/releases/download/v${nerd_fonts_version}/${family}.zip" \
+    -o "$src/${family}.zip"
+  unzip -q -j "$src/${family}.zip" '*.ttf' -d "$font_dir/$family"
+done
+curl --fail --location --silent --show-error \
+  "https://raw.githubusercontent.com/google/fonts/${google_fonts_commit}/ofl/spacegrotesk/OFL.txt" \
+  -o /usr/share/licenses/ryoku-fonts/OFL-Space-Grotesk.txt
+curl --fail --location --silent --show-error \
+  "https://raw.githubusercontent.com/google/material-design-icons/${material_icons_commit}/LICENSE" \
+  -o /usr/share/licenses/ryoku-fonts/Apache-2.0-Material-Symbols.txt
+fc-cache -f
+
 # Native shell controller and wallpaper service.
 (cd "$src/ryoku/shell/ipc" && CGO_ENABLED=0 go build -trimpath -mod=vendor -o /usr/bin/ryoku-shell .)
 (cd "$src/ryoku/shell/ryogami/daemon" && CGO_ENABLED=0 go build -trimpath -o /usr/bin/ryogami .)
@@ -53,3 +86,8 @@ test -x /usr/bin/ryoku-hub
 test -f /usr/lib/qt6/qml/Ryoku/Blobs/qmldir
 test -f /usr/share/ryoku-source/ryoku/shell/quickshell/shell/shell.qml
 test -f /usr/share/ryoku-source/ryoku/hub/quickshell/shell.qml
+fc-match -f '%{family}' 'Space Grotesk' | grep -q '^Space Grotesk'
+fc-match -f '%{family}' 'Fraunces' | grep -q '^Fraunces'
+fc-match -f '%{family}' 'Material Symbols Rounded' | grep -q '^Material Symbols Rounded'
+fc-match -f '%{family}' 'SpaceMono Nerd Font' | grep -q '^SpaceMono Nerd Font'
+fc-match -f '%{family}' 'JetBrainsMono Nerd Font' | grep -q '^JetBrainsMono Nerd Font'

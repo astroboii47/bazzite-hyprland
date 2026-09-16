@@ -58,6 +58,7 @@ dnf5 install -y \
   slurp \
   swaync \
   uwsm \
+  unzip \
   waybar \
   wayland-devel \
   wayland-protocols-devel \
@@ -74,6 +75,7 @@ test -x /usr/bin/Hyprland
 test -x /usr/bin/ryoku-shell
 test -x /usr/bin/bazzite-ryoku-first-login
 test -x /usr/bin/bazzite-ryoku-repair
+test -x /usr/bin/bazzite-display-scale
 test -x /usr/bin/wdisplays
 test -f /usr/lib/systemd/user/ryoku-shell.service
 test -f /usr/lib64/libfprint-2-tod.so.1

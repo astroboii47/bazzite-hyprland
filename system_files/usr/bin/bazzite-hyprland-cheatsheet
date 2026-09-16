@@ -17,6 +17,7 @@ SUPER + 1–0       Change workspace
 SUPER + Shift + 1–0  Move window
 SUPER + arrows    Move focus
 SUPER + CTRL + arrows  Resize active window
+SUPER + ALT + D         Set and save display scale
 SUPER + drag            Move/resize window
 Print             Screenshot
 Shift + Print     Region screenshot'
