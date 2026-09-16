@@ -49,6 +49,13 @@ hl.config({
     },
 })
 
+-- Ryoku Settings writes hardware-specific choices into these small generated
+-- files. Load them after the defaults so Display and Graphics changes persist.
+local user_hypr = (os.getenv("XDG_CONFIG_HOME") or (os.getenv("HOME") .. "/.config")) .. "/hypr/"
+for _, generated in ipairs({ "monitors.lua", "monitors_user.lua", "gpu.lua" }) do
+    pcall(dofile, user_hypr .. generated)
+end
+
 hl.curve("easeOut", { type = "bezier", points = { { 0.22, 1 }, { 0.36, 1 } } })
 hl.animation({ leaf = "windows", enabled = true, speed = 4.5, bezier = "easeOut" })
 hl.animation({ leaf = "fade", enabled = true, speed = 4, bezier = "easeOut" })

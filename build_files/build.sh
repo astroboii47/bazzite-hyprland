@@ -60,6 +60,7 @@ dnf5 install -y \
   ninja-build \
   pavucontrol \
   papirus-icon-theme \
+  pciutils \
   playerctl \
   qalculate \
   quickshell \
@@ -95,6 +96,9 @@ test -x /usr/bin/Hyprland
 test -x /usr/bin/ryoku-shell
 test -x /usr/bin/ryostore
 test -x /usr/bin/ryoku
+test -x /usr/bin/ryoku-monitor
+test -x /usr/bin/ryoku-gpu
+test -x /usr/bin/ryoku-power
 test -x /usr/bin/bazzite-ryoku-first-login
 test -x /usr/bin/bazzite-ryoku-repair
 test -x /usr/bin/bazzite-display-scale

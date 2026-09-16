@@ -88,6 +88,16 @@ for helper in "$src"/ryoku/hyprland/scripts/ryoku-*; do
   install -Dm755 "$helper" "/usr/bin/$(basename "$helper")"
 done
 
+# Portable hardware backends used by the Displays, Graphics, and Performance
+# pages in Ryoku Settings. Their probes read Hyprland/sysfs; privileged writes
+# remain constrained by Ryoku's narrow polkit rules.
+install -Dm755 "$src/system/hardware/display/ryoku-monitor" /usr/bin/ryoku-monitor
+install -Dm755 "$src/system/hardware/gpu/ryoku-gpu" /usr/bin/ryoku-gpu
+install -Dm755 "$src/system/hardware/gpu/ryoku-gpu-detect" /usr/bin/ryoku-gpu-detect
+install -Dm644 "$src/system/hardware/gpu/90-ryoku-gpu.rules" /usr/lib/udev/rules.d/90-ryoku-gpu.rules
+install -Dm755 "$src/system/hardware/power/ryoku-power" /usr/bin/ryoku-power
+install -Dm644 "$src/system/hardware/power/47-ryoku-power.rules" /usr/share/polkit-1/rules.d/47-ryoku-power.rules
+
 # Wallpaper picker, stock wallpapers, and the real animated lock surface.
 install -d /usr/share/ryogami /usr/share/ryoku/wallpapers /usr/share/ryoku/lockscreen
 cp -a "$src/ryoku/shell/ryogami/wall-ui/." /usr/share/ryogami/
@@ -106,6 +116,9 @@ test -x /usr/bin/ryogami
 test -x /usr/bin/ryoku-hub
 test -x /usr/bin/ryostore
 test -x /usr/bin/ryoku
+test -x /usr/bin/ryoku-monitor
+test -x /usr/bin/ryoku-gpu
+test -x /usr/bin/ryoku-power
 test -f /etc/xdg/quickshell/ryostore/shell.qml
 test -f /usr/share/applications/ryostore.desktop
 test -f /usr/share/applications/ryoku-hub.desktop
