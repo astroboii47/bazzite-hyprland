@@ -80,12 +80,21 @@ cp -a "$src/ryoku/shell/ryogami/wall-ui/." /usr/share/ryogami/
 cp -a "$src/ryoku/assets/wallpapers/." /usr/share/ryoku/wallpapers/
 cp -a "$src/ryoku/lockscreen/qylock/." /usr/share/ryoku/lockscreen/qylock/
 
+# Upstream Arch uses a third-party simultaneous password/fingerprint PAM
+# module. Fedora provides the supported pam_fprintd module instead. Without
+# this substitution qylock displays correctly but every fingerprint PAM
+# conversation fails because the requested module does not exist.
+sed -i 's/pam_fprintd_grosshack\.so/pam_fprintd.so/g' \
+  /usr/share/ryoku/lockscreen/qylock/quickshell-lockscreen/assets/pam/ryoku-lock
+
 test -x /usr/bin/ryoku-shell
 test -x /usr/bin/ryogami
 test -x /usr/bin/ryoku-hub
 test -f /usr/lib/qt6/qml/Ryoku/Blobs/qmldir
 test -f /usr/share/ryoku-source/ryoku/shell/quickshell/shell/shell.qml
 test -f /usr/share/ryoku-source/ryoku/hub/quickshell/shell.qml
+grep -q 'pam_fprintd.so' /usr/share/ryoku/lockscreen/qylock/quickshell-lockscreen/assets/pam/ryoku-lock
+! grep -q 'pam_fprintd_grosshack.so' /usr/share/ryoku/lockscreen/qylock/quickshell-lockscreen/assets/pam/ryoku-lock
 fc-match -f '%{family}' 'Space Grotesk' | grep -q '^Space Grotesk'
 fc-match -f '%{family}' 'Fraunces' | grep -q '^Fraunces'
 fc-match -f '%{family}' 'Material Symbols Rounded' | grep -q '^Material Symbols Rounded'

@@ -10,11 +10,11 @@ if ! find "$walls" -maxdepth 1 -type f -print -quit | grep -q .; then
   cp -a /usr/share/ryoku/wallpapers/. "$walls/"
 fi
 
-if [[ ! -f "$lock/lock_shell.qml" ]]; then
-  rm -rf "$lock"
-  cp -a /usr/share/ryoku/lockscreen/qylock/quickshell-lockscreen "$lock"
-  chmod +x "$lock/lock.sh"
-fi
+# Refresh the program on every image revision so authentication and security
+# fixes reach existing users. Themes and preferences live outside this folder.
+rm -rf "$lock"
+cp -a /usr/share/ryoku/lockscreen/qylock/quickshell-lockscreen "$lock"
+chmod +x "$lock/lock.sh"
 
 if [[ ! -d "$themes/clockwork/orbital" ]]; then
   mkdir -p "$themes/clockwork"
@@ -24,4 +24,6 @@ ln -sfn "$themes" "$lock/themes_link"
 if [[ ! -s "$HOME/.config/qylock/theme" ]]; then
   printf '%s\n' 'clockwork/orbital' > "$HOME/.config/qylock/theme"
 fi
-
+if [[ ! -s "$HOME/.config/qylock/fingerprint" ]]; then
+  printf '%s\n' 'on' > "$HOME/.config/qylock/fingerprint"
+fi
