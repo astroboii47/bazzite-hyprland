@@ -60,6 +60,7 @@ dnf5 install -y \
   ninja-build \
   pavucontrol \
   playerctl \
+  qalculate \
   quickshell \
   qt6-qtbase-devel \
   qt6-qtdeclarative-devel \
