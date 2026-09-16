@@ -147,7 +147,7 @@ install -Dm644 "$src/ryoku/apps/ryovm/quickshell/logo.svg" /usr/share/icons/hico
 # official, checksummed runtime payload instead of compiling against Bazzite's
 # protected Mesa development stack. Runtime library checks below keep this from
 # publishing if the upstream binary cannot run on this Fedora base.
-ryotunes_version="1.0.6"
+ryotunes_version="1.0.5"
 ryotunes_pkg_name="ryotunes-${ryotunes_version}-1-x86_64.pkg.tar.zst"
 ryotunes_pkg="$src/$ryotunes_pkg_name"
 ryotunes_sum="$src/$ryotunes_pkg_name.sha256"
