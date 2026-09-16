@@ -21,6 +21,12 @@ curl --fail --location --silent --show-error \
 # delayed or swallowed by a compatibility service.
 patch -d "$src" -p1 < /ctx/patches/ryoku-explicit-media-osd.patch
 
+# Matugen 4.0 supports source-colour selection but not Ryoku's newer
+# `--prefer` ranking flag. The source index already makes its palette choice
+# deterministic, so drop only that unsupported argument and keep the rest of
+# the wallpaper palette pipeline intact.
+sed -i '/"--prefer", k.Prefer,/d' "$src/ryoku/shell/ipc/matugen.go"
+
 # Ryowalls was Ryoku's original standalone wallpaper studio.  Upstream retired
 # it in favour of the embedded Ryogami picker, but the user explicitly asked
 # for that separate application.  Install the actual final Ryowalls source from

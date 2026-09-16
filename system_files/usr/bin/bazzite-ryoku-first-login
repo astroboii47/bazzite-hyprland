@@ -55,6 +55,8 @@ if [[ -f "$binds_file" ]]; then
     -e 's|hl\.dsp\.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle")|hl.dsp.exec_cmd("ryoku-volume mute")|g' \
     -e 's|hl\.dsp\.exec_cmd("brightnessctl -e4 -n2 set 5%+")|hl.dsp.exec_cmd("ryoku-shell brightness up")|g' \
     -e 's|hl\.dsp\.exec_cmd("brightnessctl -e4 -n2 set 5%-")|hl.dsp.exec_cmd("ryoku-shell brightness down")|g' \
+    -e 's|hl\.dsp\.exec_cmd("ryoku-cmd-brightness +5")|hl.dsp.exec_cmd("ryoku-shell brightness up")|g' \
+    -e 's|hl\.dsp\.exec_cmd("ryoku-cmd-brightness -5")|hl.dsp.exec_cmd("ryoku-shell brightness down")|g' \
     "$binds_file"
 fi
 
