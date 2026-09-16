@@ -121,3 +121,20 @@ hl.permission("/usr/(bin|local/bin)/grim", "screencopy", "allow")
 hl.permission("/usr/(lib|libexec|lib64)/xdg-desktop-portal-hyprland", "screencopy", "allow")
 
 hl.window_rule({ name = "float-dialogs", match = { title = "^(Open File|Save File|Authentication Required)$" }, float = true })
+
+-- KDE's Xwayland Video Bridge deliberately creates a capture window. KWin
+-- hides it automatically, while Hyprland needs an explicit rule or it becomes
+-- a large black tile. Keep it mapped for X11 screen sharing, but invisible and
+-- outside the tiling layout.
+hl.window_rule({
+    name             = "hide-xwayland-video-bridge",
+    match            = { class = "^xwaylandvideobridge$" },
+    float            = true,
+    size             = { 1, 1 },
+    max_size         = { 1, 1 },
+    opacity          = "0.0 override",
+    no_anim          = true,
+    no_blur          = true,
+    no_focus         = true,
+    no_initial_focus = true,
+})
