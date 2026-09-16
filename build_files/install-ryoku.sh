@@ -102,27 +102,6 @@ install -Dm644 "$src/ryoku/shell/portals/hyprland-portals.conf" /etc/xdg/xdg-des
 install -d /usr/share/ryoku/hyprland-default /usr/lib/systemd/user
 cp -a "$src/ryoku/hyprland/." /usr/share/ryoku/hyprland-default/
 cp -a "$src/ryoku/shell/systemd/user/." /usr/lib/systemd/user/
-# The upstream profile does not ship touchpad gestures. Keep the working
-# laptop controls from the Bazzite session in the Ryoku-owned input module so
-# a configuration repair cannot silently remove workspace/overview gestures.
-cat >> /usr/share/ryoku/hyprland-default/modules/input.lua <<'EOF'
-
--- Bazzite laptop gestures: workspace navigation and Ryoku shell surfaces.
-hl.config({ input = { touchpad = {
-    tap_to_click = true,
-    tap_and_drag = true,
-    clickfinger_behavior = true,
-    disable_while_typing = true,
-} } })
-hl.gesture({ fingers = 3, direction = "horizontal", action = "workspace" })
-hl.gesture({ fingers = 4, direction = "horizontal", action = "workspace" })
-hl.gesture({ fingers = 4, direction = "up", action = function()
-    hl.dispatch(hl.dsp.global("ryoku:overview"))
-end })
-hl.gesture({ fingers = 4, direction = "down", action = function()
-    hl.dispatch(hl.dsp.global("ryoku:quicksettings"))
-end })
-EOF
 # The portable image stores QML in /usr/share/ryoku-source rather than Arch's
 # package path.  Keep those two unit overrides after copying upstream's units.
 install -Dm644 /ctx/system_files/usr/lib/systemd/user/ryoku-shell.service /usr/lib/systemd/user/ryoku-shell.service
