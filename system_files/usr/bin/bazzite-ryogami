@@ -1,0 +1,13 @@
+#!/bin/bash
+set -euo pipefail
+
+# Hyprland can receive the wallpaper key before the user service has created
+# its socket. Start it and wait briefly so the first Super+W is reliable too.
+systemctl --user start ryogami.service
+socket="${XDG_RUNTIME_DIR:-/tmp}/ryogami.sock"
+for _ in {1..30}; do
+  [[ -S "$socket" ]] && exec /usr/bin/ryogami "$@"
+  sleep 0.1
+done
+printf 'Ryoku wallpaper service did not become ready.\n' >&2
+exit 1

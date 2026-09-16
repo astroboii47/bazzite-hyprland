@@ -52,6 +52,12 @@ fc-cache -f
 (cd "$src/ryoku/shell/ryogami/daemon" && CGO_ENABLED=0 go build -trimpath -o /usr/bin/ryogami .)
 # Settings Hub backend used by the real Ryoku configuration window.
 (cd "$src/ryoku/hub/backend" && CGO_ENABLED=0 go build -trimpath -o /usr/bin/ryoku-hub .)
+# RyoStore is a separate Quickshell application and Go data backend. Installing
+# the shell tree alone does not make the Store launcher or its catalogue work.
+(cd "$src/ryoku/apps/ryostore/backend" && CGO_ENABLED=0 go build -trimpath -o /usr/bin/ryostore .)
+# The Store and Settings use this for version/compatibility checks and desktop
+# maintenance. Build the pinned CLI from the same source as the shell.
+(cd "$src/ryoku/cli" && CGO_ENABLED=0 go build -trimpath -mod=vendor -o /usr/bin/ryoku .)
 
 # The compiled metaball renderer creates Ryoku's floating frame shapes.
 RYOKU_BLOBS_BUILD="$src/build-blobs" \
@@ -65,6 +71,14 @@ install -d /usr/lib/qt6/qml/Ryoku/Ui /usr/lib/qt6/qml/Ryoku/FrameBars /usr/lib/q
 cp -a "$src/ryoku/ui/." /usr/lib/qt6/qml/Ryoku/Ui/
 cp -a "$src/ryoku/shell/framebars/." /usr/lib/qt6/qml/Ryoku/FrameBars/
 cp -a "$src/ryoku/shell/quickshell/plugins/kit/." /usr/lib/qt6/qml/Ryoku/PluginKit/
+
+install -d /etc/xdg/quickshell/ryostore /etc/xdg/xdg-desktop-portal /usr/share/applications /usr/share/icons/hicolor/scalable/apps
+cp -a "$src/ryoku/apps/ryostore/quickshell/." /etc/xdg/quickshell/ryostore/
+install -Dm644 "$src/ryoku/apps/ryostore/ryostore.desktop" /usr/share/applications/ryostore.desktop
+install -Dm644 "$src/ryoku/apps/ryostore/quickshell/logo.svg" /usr/share/icons/hicolor/scalable/apps/ryostore.svg
+install -Dm644 "$src/ryoku/hub/ryoku-hub.desktop" /usr/share/applications/ryoku-hub.desktop
+install -Dm644 "$src/ryoku/assets/brand/logo.svg" /usr/share/icons/hicolor/scalable/apps/ryoku-hub.svg
+install -Dm644 "$src/ryoku/shell/portals/hyprland-portals.conf" /etc/xdg/xdg-desktop-portal/hyprland-portals.conf
 
 install -Dm755 "$src/ryoku/shell/scripts/ryoku-reload-cover" /usr/bin/ryoku-reload-cover
 install -Dm755 "$src/ryoku/shell/scripts/ryostage" /usr/bin/ryostage
@@ -90,6 +104,12 @@ sed -i 's/pam_fprintd_grosshack\.so/pam_fprintd.so/g' \
 test -x /usr/bin/ryoku-shell
 test -x /usr/bin/ryogami
 test -x /usr/bin/ryoku-hub
+test -x /usr/bin/ryostore
+test -x /usr/bin/ryoku
+test -f /etc/xdg/quickshell/ryostore/shell.qml
+test -f /usr/share/applications/ryostore.desktop
+test -f /usr/share/applications/ryoku-hub.desktop
+test -f /etc/xdg/xdg-desktop-portal/hyprland-portals.conf
 test -f /usr/lib/qt6/qml/Ryoku/Blobs/qmldir
 test -f /usr/share/ryoku-source/ryoku/shell/quickshell/shell/shell.qml
 test -f /usr/share/ryoku-source/ryoku/hub/quickshell/shell.qml

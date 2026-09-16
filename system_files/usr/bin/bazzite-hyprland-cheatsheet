@@ -6,13 +6,18 @@ SUPER + Space     App launcher
 SUPER + E         Files
 SUPER + Q         Close window
 SUPER + F         Fullscreen
-SUPER + V         Float window
+SUPER + A         Float/tile window
+SUPER + V         Clipboard history
 SUPER + L         Lock
-SUPER + N         Notifications
-SUPER + C         Clipboard history
+SUPER + N         Quick settings
 SUPER + W         Choose wallpaper
-SUPER + comma     Choose theme
-SUPER + Escape    Control sidebar
+SUPER + Shift + W Random wallpaper
+SUPER + comma     Ryoku Settings
+SUPER + Shift + comma  RyoStore
+SUPER + Escape    Quick settings
+SUPER + Tab       Workspace overview
+SUPER + M         Audio visualizer
+SUPER + Shift + S Ryoku screenshot editor
 SUPER + 1–0       Change workspace
 SUPER + Shift + 1–0  Move window
 SUPER + arrows    Move focus

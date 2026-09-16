@@ -92,9 +92,12 @@ dnf5 clean all
 # Catch missing session, portal, and configuration files during the image build.
 test -x /usr/bin/Hyprland
 test -x /usr/bin/ryoku-shell
+test -x /usr/bin/ryostore
+test -x /usr/bin/ryoku
 test -x /usr/bin/bazzite-ryoku-first-login
 test -x /usr/bin/bazzite-ryoku-repair
 test -x /usr/bin/bazzite-display-scale
+test -x /usr/bin/bazzite-ryogami
 test -x /usr/bin/powerprofilesctl
 test -x /usr/bin/wdisplays
 for tool in cava convert ddcutil hyprsunset jq powerprofilesctl qalc tesseract upower wf-recorder wtype zbarimg; do
@@ -115,4 +118,8 @@ test ! -e /etc/xdg/quickshell/bazzite-ryoku
 test ! -e /usr/bin/bazzite-ryoku-shell
 test -f /usr/share/ryoku-source/ryoku/shell/quickshell/shell/shell.qml
 test -f /usr/share/ryoku-source/ryoku/hub/quickshell/shell.qml
+test -f /etc/xdg/quickshell/ryostore/shell.qml
+grep -q '^Exec=.*qs -c ryostore$' /usr/share/applications/ryostore.desktop
+grep -q '^Exec=ryoku-shell hub open$' /usr/share/applications/ryoku-hub.desktop
+grep -q '^org.freedesktop.impl.portal.ScreenCast=hyprland' /etc/xdg/xdg-desktop-portal/hyprland-portals.conf
 test -f /etc/xdg/waybar/config.jsonc
