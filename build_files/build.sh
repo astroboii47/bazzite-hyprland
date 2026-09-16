@@ -68,6 +68,7 @@ dnf5 install -y \
   papirus-icon-theme \
   pciutils \
   playerctl \
+  quickemu \
   pkgconf-pkg-config \
   pixman-devel \
   qalculate \
@@ -77,6 +78,12 @@ dnf5 install -y \
   qt6-qtmultimedia-devel \
   qt6-qtsvg \
   qt6-qtshadertools-devel \
+  rust \
+  cargo \
+  mpv-devel \
+  webkit2gtk4.1-devel \
+  libappindicator-gtk3-devel \
+  yt-dlp \
   slurp \
   tesseract \
   tesseract-langpack-eng \
@@ -107,6 +114,15 @@ test -x /usr/bin/Hyprland
 test -x /usr/bin/ryoku-shell
 test -x /usr/bin/ryostore
 test -x /usr/bin/ryoku
+test -x /usr/bin/ryovm
+test -x /usr/bin/ryovm-fetch
+test -x /usr/bin/ryovm-mon
+test -x /usr/bin/ryossh
+test -x /usr/bin/ryoport
+test -x /usr/bin/ryotunes
+test -x /usr/bin/ryotunesd
+test -x /usr/bin/ryotunes-cli
+test -x /usr/bin/ryotunes-qml
 test -x /usr/bin/ryoku-volume
 test -x /usr/bin/ryoku-monitor
 test -x /usr/bin/ryoku-gpu
@@ -116,6 +132,8 @@ test -x /usr/bin/bazzite-ryoku-repair
 test -x /usr/bin/bazzite-display-scale
 test -x /usr/bin/bazzite-ryogami
 test -f /usr/share/applications/ryoku-wallpapers.desktop
+test -f /usr/share/applications/ryovm.desktop
+test -f /usr/share/applications/ryotunes.desktop
 grep -q 'ryoku:wallpaper-menu' /etc/xdg/hypr/hyprland.lua
 grep -q 'config.json.example' /usr/bin/bazzite-ryoku-first-login
 test -x /usr/bin/powerprofilesctl
@@ -140,6 +158,10 @@ test ! -e /usr/bin/bazzite-ryoku-shell
 test -f /usr/share/ryoku-source/ryoku/shell/quickshell/shell/shell.qml
 test -f /usr/share/ryoku-source/ryoku/hub/quickshell/shell.qml
 test -f /etc/xdg/quickshell/ryostore/shell.qml
+test -f /etc/xdg/quickshell/ryovm/shell.qml
+test -f /usr/lib/systemd/user/ryotunesd.socket
+test -f /usr/lib/systemd/user/ryotunesd.service
+test -f /usr/share/ryotunes/client/App.qml
 grep -q '^Exec=.*qs -c ryostore$' /usr/share/applications/ryostore.desktop
 grep -q '^Exec=ryoku-shell hub open$' /usr/share/applications/ryoku-hub.desktop
 grep -q '^org.freedesktop.impl.portal.ScreenCast=hyprland' /etc/xdg/xdg-desktop-portal/hyprland-portals.conf
