@@ -19,6 +19,17 @@ if [[ "${1:-}" == "--reset-config" ]]; then
   else
     printf '%s\n' '{"followWallpaper":true}' > "$theme_dir/theme.json"
   fi
+  # shell.json is Ryoku's actual palette master. A named entry here overrides
+  # theme.json and deliberately holds its own accent, so reset it to Wallpaper
+  # before replaying the current image through Ryogami.
+  shell_file="$theme_dir/shell.json"
+  if [[ -f "$shell_file" ]]; then
+    tmp="$(mktemp "$theme_dir/shell.json.XXXXXX")"
+    jq '.theme = (.theme // {}) | .theme.theme = "Wallpaper"' "$shell_file" > "$tmp"
+    mv "$tmp" "$shell_file"
+  else
+    printf '%s\n' '{"theme":{"theme":"Wallpaper"}}' > "$shell_file"
+  fi
   if [[ -f "$config_dir/settings.lua" ]]; then
     sed -i '/\["col\.active_border"\]/d; /\["col\.inactive_border"\]/d' "$config_dir/settings.lua"
   fi
