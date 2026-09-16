@@ -58,6 +58,16 @@ if [[ -f "$binds_file" ]]; then
     "$binds_file"
 fi
 
+# The Bazzite base also has Plasma's optional media-overlay processes. In a
+# Hyprland login they can draw a second, unthemed OSD over Ryoku's own surface.
+# Stop only the visual overlay processes in this login; a later Plasma login
+# starts its normal shell again, so the KDE fallback remains intact.
+if [[ "${XDG_CURRENT_DESKTOP:-}" == *Hyprland* ]]; then
+  for overlay in plasmashell swayosd-server avizo-service xob; do
+    pkill -x "$overlay" 2>/dev/null || true
+  done
+fi
+
 # Ryoku's dock and launcher resolve desktop icons through the active GTK theme.
 # Use the icon set its layouts were designed and tested with.
 gsettings set org.gnome.desktop.interface icon-theme 'Papirus' 2>/dev/null || true

@@ -1,0 +1,200 @@
+diff --git a/ryoku/shell/ipc/control.go b/ryoku/shell/ipc/control.go
+index 3c91d769..69ca11ba 100644
+--- a/ryoku/shell/ipc/control.go
++++ b/ryoku/shell/ipc/control.go
+@@ -4,6 +4,8 @@ import (
+ 	"os"
+ 	"os/exec"
+ 	"path/filepath"
++	"strconv"
++	"strings"
+ 	"time"
+ )
+ 
+@@ -77,6 +79,15 @@ func (d *daemon) audio(sub string) string {
+ 	if err := exec.Command("wpctl", argv...).Run(); err != nil {
+ 		return "err audio: " + err.Error()
+ 	}
++	if out, err := exec.Command("wpctl", "get-volume", "@DEFAULT_AUDIO_SINK@").Output(); err == nil && d.osd != nil {
++		fields := strings.Fields(string(out))
++		for _, field := range fields {
++			if value, err := strconv.ParseFloat(field, 64); err == nil {
++				d.osd.publishVolume(value, strings.Contains(string(out), "MUTED"))
++				break
++			}
++		}
++	}
+ 	return "ok"
+ }
+ 
+@@ -89,6 +100,15 @@ func (d *daemon) brightness(sub string) string {
+ 	if err := exec.Command("ryoku-cmd-brightness", argv...).Run(); err != nil {
+ 		return "err brightness: " + err.Error()
+ 	}
++	if d.osd != nil {
++		if dev := backlightDevice(); dev != "" {
++			if max, ok := readSysInt(filepath.Join(dev, "max_brightness")); ok && max > 0 {
++				if cur, ok := readSysInt(filepath.Join(dev, "actual_brightness")); ok {
++					d.osd.publishBrightness(float64(cur)/float64(max), true)
++				}
++			}
++		}
++	}
+ 	return "ok"
+ }
+ 
+diff --git a/ryoku/shell/ipc/daemon.go b/ryoku/shell/ipc/daemon.go
+index 6c2f0c52..ef81f6fd 100644
+--- a/ryoku/shell/ipc/daemon.go
++++ b/ryoku/shell/ipc/daemon.go
+@@ -139,6 +139,7 @@ type daemon struct {
+ 	settings    *settingsStore           // shell.json store (nil until startSettings); theme apply patches through it
+ 	pp          *powerProfilesState      // power-profiles-daemon bus state; nil until startPowerProfiles
+ 	keypress    *keypressManager         // evdev key stream; opens devices only while the overlay is enabled
++	osd         *osdState                // explicit media-key OSD feed, initialized by startOsd
+ }
+ 
+ func runDaemon() error {
+diff --git a/ryoku/shell/ipc/osd.go b/ryoku/shell/ipc/osd.go
+index d685b0ac..8122ec49 100644
+--- a/ryoku/shell/ipc/osd.go
++++ b/ryoku/shell/ipc/osd.go
+@@ -21,8 +21,12 @@ import (
+ // beside the volume and mic buckets. Contract 12 sec 3, sec 9.
+ 
+ type osdState struct {
+-	topic *stateTopic
+-	seq   int
++	topic          *stateTopic
++	brightnessSeq  int
++	brightness     float64
++	volumeSeq      int
++	volume         float64
++	volumeMuted    bool
+ }
+ 
+ // backlightDevice picks the primary backlight: the first entry under
+@@ -55,7 +59,8 @@ func readSysInt(path string) (int, bool) {
+ // watcher goroutine that republishes on every brightness change.
+ func (d *daemon) startOsd() {
+ 	o := &osdState{topic: d.registerTopic("osd")}
+-	o.publish(0)
++	d.osd = o
++	o.publish()
+ 	if dev := backlightDevice(); dev != "" {
+ 		go o.watchBacklight(dev)
+ 	}
+@@ -63,13 +68,32 @@ func (d *daemon) startOsd() {
+ 
+ // publish writes the current osd frame. The topic drops a byte-identical frame,
+ // so republishing an unchanged value never wakes a QML binding.
+-func (o *osdState) publish(value float64) {
++func (o *osdState) publish() {
+ 	frame, _ := json.Marshal(map[string]any{
+-		"brightness": map[string]any{"seq": o.seq, "value": value},
++		"brightness": map[string]any{"seq": o.brightnessSeq, "value": o.brightness},
++		"volume": map[string]any{"seq": o.volumeSeq, "value": o.volume, "muted": o.volumeMuted},
+ 	})
+ 	o.topic.publish(frame)
+ }
+ 
++// publishVolume makes media-key feedback explicit instead of relying on a
++// PipeWire signal reaching QML. This matters on mixed KDE/Hyprland sessions,
++// where an external OSD can see the key while the shell misses its graph event.
++func (o *osdState) publishVolume(value float64, muted bool) {
++	o.volume = value
++	o.volumeMuted = muted
++	o.volumeSeq++
++	o.publish()
++}
++
++func (o *osdState) publishBrightness(value float64, changed bool) {
++	o.brightness = value
++	if changed {
++		o.brightnessSeq++
++	}
++	o.publish()
++}
++
+ // watchBacklight blocks in poll(2) on the backlight's actual_brightness sysfs
+ // attribute, which the kernel wakes with POLLPRI on every brightness change
+ // (media keys, the brightness verb, or anything else). Each wake recomputes the
+@@ -89,7 +113,7 @@ func (o *osdState) watchBacklight(dev string) {
+ 
+ 	buf := make([]byte, 32)
+ 	if cur, ok := readActual(fd, buf); ok {
+-		o.publish(float64(cur) / float64(maxb))
++		o.publishBrightness(float64(cur)/float64(maxb), false)
+ 	}
+ 	for {
+ 		fds := []unix.PollFd{{Fd: int32(fd), Events: unix.POLLPRI | unix.POLLERR}}
+@@ -107,8 +131,7 @@ func (o *osdState) watchBacklight(dev string) {
+ 		if !ok {
+ 			continue
+ 		}
+-		o.seq++
+-		o.publish(float64(cur) / float64(maxb))
++		o.publishBrightness(float64(cur)/float64(maxb), true)
+ 	}
+ }
+ 
+diff --git a/ryoku/shell/quickshell/shell/modules/osd/Osd.qml b/ryoku/shell/quickshell/shell/modules/osd/Osd.qml
+index f512df04..bc9a07d9 100644
+--- a/ryoku/shell/quickshell/shell/modules/osd/Osd.qml
++++ b/ryoku/shell/quickshell/shell/modules/osd/Osd.qml
+@@ -32,7 +32,8 @@ Item {
+     readonly property var device: isVolume ? Pipewire.defaultAudioSink
+         : isMic ? Pipewire.defaultAudioSource : null
+     readonly property var audio: (device && device.audio) ? device.audio : null
+-    readonly property bool muted: audio ? audio.muted : false
++    readonly property bool explicitVolume: isVolume && OsdFeed.volumeSeq > 0
++    readonly property bool muted: explicitVolume ? OsdFeed.volumeMuted : (audio ? audio.muted : false)
+     // With BOOST on, the sink legitimately runs past unity, so the OSD has to be
+     // able to say so: it spans up to the same 150% the media keys allow and marks
+     // where unity sits. Clamping at 1 made every boosted keypress look identical.
+@@ -40,6 +41,7 @@ Item {
+         && Config.qsbar.audioBoost === true) ? 1.5 : 1.0
+     readonly property real value: isBrightness
+         ? OsdFeed.brightness
++        : explicitVolume ? OsdFeed.volume
+         : (audio ? Math.max(0, Math.min(root.maxValue, audio.volume)) : 0)
+     readonly property bool over: root.value > 1.005
+ 
+@@ -106,6 +108,10 @@ Item {
+         target: root.isBrightness ? OsdFeed : null
+         function onBrightnessSeqChanged() { root.flash(); }
+     }
++    Connections {
++        target: root.isVolume ? OsdFeed : null
++        function onVolumeSeqChanged() { root.flash(); }
++    }
+ 
+     // --- content: icon + value bar + percentage (contract 12 sec 2) ---------
+     // Base logical px: inner box width 250, spacing 16, icon 40, bar height 6,
+diff --git a/ryoku/shell/quickshell/shell/services/OsdFeed.qml b/ryoku/shell/quickshell/shell/services/OsdFeed.qml
+index 9630327a..33c2ae7b 100644
+--- a/ryoku/shell/quickshell/shell/services/OsdFeed.qml
++++ b/ryoku/shell/quickshell/shell/services/OsdFeed.qml
+@@ -15,6 +15,9 @@ Singleton {
+ 
+     property real brightness: 0
+     property int brightnessSeq: 0
++    property real volume: 0
++    property bool volumeMuted: false
++    property int volumeSeq: 0
+     readonly property string sockPath: (Quickshell.env("XDG_RUNTIME_DIR") || "/tmp") + "/ryoku-shell.sock"
+ 
+     function apply(line) {
+@@ -26,6 +29,12 @@ Singleton {
+                 if (typeof b.seq === "number")
+                     root.brightnessSeq = b.seq;
+             }
++			const v = JSON.parse(line).volume;
++			if (v) {
++				if (typeof v.value === "number") root.volume = Math.max(0, Math.min(1, v.value));
++				if (typeof v.muted === "boolean") root.volumeMuted = v.muted;
++				if (typeof v.seq === "number") root.volumeSeq = v.seq;
++			}
+         } catch (e) {
+             // A malformed frame must never wedge the OSD; keep the last value.
+         }

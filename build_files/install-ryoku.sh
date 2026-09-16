@@ -15,6 +15,12 @@ curl --fail --location --silent --show-error \
   "https://github.com/Ryoku-dev/ryoku-arch/archive/${ryoku_commit}.tar.gz" \
   | tar -xz --strip-components=1 -C "$src"
 
+# The upstream shell normally relies on PipeWire/sysfs change notifications to
+# show media OSDs. Make media-key feedback explicit as well, so the Bazzite
+# session reliably displays the Ryoku overlay even when those notifications are
+# delayed or swallowed by a compatibility service.
+patch -d "$src" -p1 < /ctx/build_files/patches/ryoku-explicit-media-osd.patch
+
 # Ryowalls was Ryoku's original standalone wallpaper studio.  Upstream retired
 # it in favour of the embedded Ryogami picker, but the user explicitly asked
 # for that separate application.  Install the actual final Ryowalls source from
