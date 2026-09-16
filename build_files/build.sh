@@ -81,6 +81,7 @@ dnf5 install -y \
   qt6-qtsvg \
   qt6-qtshadertools-devel \
   mpv \
+  mpv-libs \
   webkit2gtk4.1 \
   libappindicator-gtk3 \
   yt-dlp \
@@ -131,9 +132,10 @@ test -x /usr/bin/bazzite-ryoku-repair
 test -x /usr/bin/bazzite-display-scale
 test -x /usr/bin/bazzite-ryogami
 test -f /usr/share/applications/ryoku-wallpapers.desktop
+test -f /usr/share/icons/hicolor/scalable/apps/ryoku-wallpapers.svg
 test -f /usr/share/applications/ryovm.desktop
 test -f /usr/share/applications/ryotunes.desktop
-grep -q 'ryoku:wallpaper-menu' /etc/xdg/hypr/hyprland.lua
+grep -q 'ryoku-shell menu wallpaper' /etc/xdg/hypr/hyprland.lua
 grep -q 'config.json.example' /usr/bin/bazzite-ryoku-first-login
 test -x /usr/bin/powerprofilesctl
 test -x /usr/bin/wdisplays
@@ -161,6 +163,8 @@ test -f /etc/xdg/quickshell/ryovm/shell.qml
 test -f /usr/lib/systemd/user/ryotunesd.socket
 test -f /usr/lib/systemd/user/ryotunesd.service
 test -f /usr/share/ryotunes/client/App.qml
+test -e /usr/lib64/libmpv.so.2
+test -x /usr/local/bin/matugen
 grep -q '^Exec=.*qs -c ryostore$' /usr/share/applications/ryostore.desktop
 grep -q '^Exec=ryoku-shell hub open$' /usr/share/applications/ryoku-hub.desktop
 grep -q '^org.freedesktop.impl.portal.ScreenCast=hyprland' /etc/xdg/xdg-desktop-portal/hyprland-portals.conf

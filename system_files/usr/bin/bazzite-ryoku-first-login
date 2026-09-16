@@ -38,6 +38,14 @@ if [[ "${1:-}" == "--refresh-hypr" || ! -e "$hypr_marker" ]]; then
   refresh_hypr
 fi
 
+# A prior image used a global action that is no longer provided by the real
+# shell. Migrate only that exact stale wallpaper binding, leaving every other
+# user keybind (including their chosen terminal shortcut) untouched.
+binds_file="$hypr_config/modules/binds.lua"
+if [[ -f "$binds_file" ]] && grep -Fq 'hl.dsp.global("ryoku:wallpaper-menu")' "$binds_file"; then
+  sed -i 's|hl\.dsp\.global("ryoku:wallpaper-menu")|hl.dsp.exec_cmd("ryoku-shell menu wallpaper")|g' "$binds_file"
+fi
+
 # Ryoku's dock and launcher resolve desktop icons through the active GTK theme.
 # Use the icon set its layouts were designed and tested with.
 gsettings set org.gnome.desktop.interface icon-theme 'Papirus' 2>/dev/null || true

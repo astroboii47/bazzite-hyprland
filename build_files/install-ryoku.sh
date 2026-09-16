@@ -15,6 +15,20 @@ curl --fail --location --silent --show-error \
   "https://github.com/Ryoku-dev/ryoku-arch/archive/${ryoku_commit}.tar.gz" \
   | tar -xz --strip-components=1 -C "$src"
 
+# Ryoku's palette controller uses Matugen 4 options such as source-colour
+# selection and lightness controls. Fedora 43 ships an older CLI that accepts
+# the start of the command then rejects those options, leaving the UI on its
+# stale accent. Pin the upstream v4 binary, verify its published archive, and
+# put it first in the normal command path for both user services and launchers.
+matugen_version="4.0.0"
+matugen_archive="$src/matugen-${matugen_version}-x86_64.tar.gz"
+curl --fail --location --silent --show-error \
+  "https://github.com/InioX/matugen/releases/download/v${matugen_version}/matugen-${matugen_version}-x86_64.tar.gz" \
+  -o "$matugen_archive"
+echo '8a5575111a3f49f54bf5bedd735fe56ab7afb569a75c0895cd48e7314045b4d4  '"$matugen_archive" | sha256sum -c -
+tar -xzf "$matugen_archive" -C "$src"
+install -Dm755 "$src/matugen" /usr/local/bin/matugen
+
 # Flatpak exports its application icons outside the normal XDG icon roots.
 # Include both the system and per-user export trees when Ryoku builds the dock
 # index; otherwise native apps resolve while many Flatpak app tiles are blank.
@@ -140,6 +154,11 @@ install -d /usr/lib/qt6/qml/Ryoku/Ui /usr/lib/qt6/qml/Ryoku/FrameBars /usr/lib/q
 cp -a "$src/ryoku/ui/." /usr/lib/qt6/qml/Ryoku/Ui/
 cp -a "$src/ryoku/shell/framebars/." /usr/lib/qt6/qml/Ryoku/FrameBars/
 cp -a "$src/ryoku/shell/quickshell/plugins/kit/." /usr/lib/qt6/qml/Ryoku/PluginKit/
+# Fedora's Qt runtime discovers QML modules below /usr/lib64.  The Ryoku
+# shell can resolve many relative imports, but the independent wallpaper app
+# cannot; expose the same module tree at Fedora's standard location.
+install -d /usr/lib64/qt6/qml
+ln -sfn /usr/lib/qt6/qml/Ryoku /usr/lib64/qt6/qml/Ryoku
 
 install -d /etc/xdg/quickshell/ryostore /etc/xdg/xdg-desktop-portal /usr/share/applications /usr/share/icons/hicolor/scalable/apps
 cp -a "$src/ryoku/apps/ryostore/quickshell/." /etc/xdg/quickshell/ryostore/
@@ -227,6 +246,7 @@ install -d /usr/share/ryogami /usr/share/ryoku/wallpapers /usr/share/ryoku/locks
 cp -a "$src/ryoku/shell/ryogami/wall-ui/." /usr/share/ryogami/
 cp -a "$src/ryoku/assets/wallpapers/." /usr/share/ryoku/wallpapers/
 cp -a "$src/ryoku/lockscreen/qylock/." /usr/share/ryoku/lockscreen/qylock/
+install -Dm644 "$src/ryoku/assets/brand/logo.svg" /usr/share/icons/hicolor/scalable/apps/ryoku-wallpapers.svg
 
 # Upstream Arch uses a third-party simultaneous password/fingerprint PAM
 # module. Fedora provides the supported pam_fprintd module instead. Without
@@ -251,6 +271,9 @@ test -x /usr/bin/ryotunesd
 test -x /usr/bin/ryotunes-cli
 test -x /usr/bin/ryotunes-qml
 ! ldd /usr/bin/ryotunesd | grep -q 'not found'
+! ldd /usr/bin/ryotunes | grep -q 'not found'
+test -e /usr/lib64/libmpv.so.2
+test -x /usr/local/bin/matugen
 test -x /usr/bin/quickshell
 test -x /usr/bin/ryoku-monitor
 test -x /usr/bin/ryoku-hw-backlight
@@ -278,6 +301,8 @@ test -x /usr/share/ryoku-source/ryoku/shell/ipc/ryoku-shell
 grep -Fq 'ryoku-shell menu wallpaper' /usr/share/ryoku/hyprland-default/modules/binds.lua
 grep -Fq '/var/lib/flatpak/exports/share/icons' /usr/share/ryoku-source/ryoku/shell/ipc/icons.go
 grep -Fq 'df -B1 --output=used,size \"$HOME\"' /usr/share/ryoku-source/ryoku/shell/quickshell/shell/services/StatsFeed.qml
+test -L /usr/lib64/qt6/qml/Ryoku
+test -f /usr/lib64/qt6/qml/Ryoku/Ui/Singletons/qmldir
 test -f /usr/share/ryoku-source/ryoku/hub/quickshell/shell.qml
 grep -q 'pam_fprintd.so' /usr/share/ryoku/lockscreen/qylock/quickshell-lockscreen/assets/pam/ryoku-lock
 ! grep -q 'pam_fprintd_grosshack.so' /usr/share/ryoku/lockscreen/qylock/quickshell-lockscreen/assets/pam/ryoku-lock
