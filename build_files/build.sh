@@ -94,6 +94,7 @@ test -x /usr/bin/ryoku-shell
 test -x /usr/bin/bazzite-ryoku-first-login
 test -x /usr/bin/bazzite-ryoku-repair
 test -x /usr/bin/bazzite-display-scale
+test -x /usr/bin/powerprofilesctl
 test -x /usr/bin/wdisplays
 for tool in cava convert ddcutil hyprsunset jq powerprofilesctl qalc tesseract upowerctl wf-recorder wtype zbarimg; do
   command -v "$tool" >/dev/null

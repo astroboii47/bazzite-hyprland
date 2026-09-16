@@ -1,0 +1,41 @@
+#!/bin/bash
+set -euo pipefail
+
+# Bazzite exposes the standard net.hadess.PowerProfiles D-Bus API through
+# tuned-ppd. Ryoku also calls the reference daemon's small CLI from a few QML
+# widgets, so provide the same get/list/set surface without replacing tuned.
+service="net.hadess.PowerProfiles"
+object="/net/hadess/PowerProfiles"
+interface="net.hadess.PowerProfiles"
+
+case "${1:-}" in
+  get)
+    busctl get-property "$service" "$object" "$interface" ActiveProfile |
+      sed -n 's/^s "\(.*\)"$/\1/p'
+    ;;
+  list)
+    active="$($0 get)"
+    for profile in power-saver balanced performance; do
+      if [[ "$profile" == "$active" ]]; then
+        printf '* %s:\n' "$profile"
+      else
+        printf '  %s:\n' "$profile"
+      fi
+    done
+    ;;
+  set)
+    case "${2:-}" in
+      power-saver|balanced|performance)
+        busctl set-property "$service" "$object" "$interface" ActiveProfile s "$2"
+        ;;
+      *)
+        printf 'Unknown power profile: %s\n' "${2:-}" >&2
+        exit 2
+        ;;
+    esac
+    ;;
+  *)
+    printf 'Usage: powerprofilesctl {get|list|set PROFILE}\n' >&2
+    exit 2
+    ;;
+esac
