@@ -1,0 +1,35 @@
+diff --git a/ryoku/shell/quickshell/shell/modules/desktop/stats/StatsWidget.qml b/ryoku/shell/quickshell/shell/modules/desktop/stats/StatsWidget.qml
+--- a/ryoku/shell/quickshell/shell/modules/desktop/stats/StatsWidget.qml
++++ b/ryoku/shell/quickshell/shell/modules/desktop/stats/StatsWidget.qml
+@@ -166,18 +166,25 @@ Item {
+             property var dn: StatsFeed.netDownHist
+             property var up: StatsFeed.netUpHist
+             property real peak: root.netMax
++            // The two network traces share the live wallpaper palette: download
++            // is the shell's primary accent and upload is a light neutral line.
++            // This replaces the fixed blue/red pair from the design mock-up.
++            property color accent: Theme.primary
++            property color neutral: Qt.rgba(box.ink.r, box.ink.g, box.ink.b, 0.82)
+             onDnChanged: requestPaint()
+             onUpChanged: requestPaint()
+             onPeakChanged: requestPaint()
++            onAccentChanged: requestPaint()
++            onNeutralChanged: requestPaint()
+             onPaint: {
+                 var c = getContext("2d"); c.reset();
+                 var pk = netCanvas.peak > 0 ? netCanvas.peak : 1;
+                 function line(arr,col){ if(!arr||arr.length<2) return; c.beginPath(); var n=arr.length,dx=width/(n-1);
+                     for(var i=0;i<n;i++){var f=Math.max(0,Math.min(1,arr[i]/pk)); var yy=height-f*height; if(i===0)c.moveTo(0,yy);else c.lineTo(i*dx,yy);}
+                     c.lineWidth=1.6; c.strokeStyle=col; c.stroke(); }
+-                line(netCanvas.up,"rgba(224,150,170,0.9)"); line(netCanvas.dn,"rgba(140,170,220,0.9)");
++                line(netCanvas.up, netCanvas.neutral); line(netCanvas.dn, netCanvas.accent);
+             }
+             Component.onCompleted: requestPaint()
+         }
+         Column {
+             y: 430; width: parent.width; spacing: 0
+-            Row1 { label: Ui.I18n.tr("Download Rate"); value: root.fmtRate(StatsFeed.downBps); tick: "#8caadc" }
+-            Row1 { label: Ui.I18n.tr("Upload Rate"); value: root.fmtRate(StatsFeed.upBps); tick: "#e096aa" }
++            Row1 { label: Ui.I18n.tr("Download Rate"); value: root.fmtRate(StatsFeed.downBps); tick: Theme.primary }
++            Row1 { label: Ui.I18n.tr("Upload Rate"); value: root.fmtRate(StatsFeed.upBps); tick: Qt.rgba(box.ink.r, box.ink.g, box.ink.b, 0.82) }
+         }

@@ -41,6 +41,7 @@ fi
 pkill -f 'quickshell.*bazzite-ryoku' 2>/dev/null || true
 dbus-update-activation-environment --systemd --all
 systemctl --user daemon-reload
+systemctl --user enable --now ryotunesd.socket
 systemctl --user reset-failed ryoku-shell.service ryogami.service 2>/dev/null || true
 systemctl --user restart ryoku-shell.service ryogami.service
 # Reapply the current wallpaper after the services are alive. This regenerates

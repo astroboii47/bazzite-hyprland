@@ -20,12 +20,26 @@ curl --fail --location --silent --show-error \
 # session reliably displays the Ryoku overlay even when those notifications are
 # delayed or swallowed by a compatibility service.
 patch -d "$src" -p1 < /ctx/patches/ryoku-explicit-media-osd.patch
+patch -d "$src" -p1 < /ctx/patches/ryoku-wallpaper-graph-colors.patch
 
 # Matugen 4.0 supports source-colour selection but not Ryoku's newer
 # `--prefer` ranking flag. The source index already makes its palette choice
 # deterministic, so drop only that unsupported argument and keep the rest of
 # the wallpaper palette pipeline intact.
 sed -i '/"--prefer", k.Prefer,/d' "$src/ryoku/shell/ipc/matugen.go"
+
+# Ryoku's shell uses the Material primary as its visible accent, but the
+# upstream Hyprland template used secondary (base16 color4) for focused window
+# borders. Keep the focused outline on the same wallpaper-derived accent users
+# see in the bar, widgets, and pickers.
+sed -i 's/{{colors\.color4\.default\.hex}}/{{colors\.primary\.default\.hex}}/' \
+  "$src/ryoku/shell/matugen/templates/hypr-colors.lua"
+sed -i \
+  -e 's/Color4     string `json:"color4"`/Primary    string `json:"primary"`/' \
+  -e 's/hyprRGB(c\.Color4)/hyprRGB(c.Primary)/' \
+  "$src/ryoku/shell/ipc/matugen.go"
+grep -Fq 'active = "{{colors.primary.default.hex}}"' "$src/ryoku/shell/matugen/templates/hypr-colors.lua"
+grep -Fq 'hyprRGB(c.Primary)' "$src/ryoku/shell/ipc/matugen.go"
 
 # Ryowalls was Ryoku's original standalone wallpaper studio.  Upstream retired
 # it in favour of the embedded Ryogami picker, but the user explicitly asked
