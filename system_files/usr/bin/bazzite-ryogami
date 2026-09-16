@@ -6,7 +6,12 @@ set -euo pipefail
 systemctl --user start ryogami.service
 socket="${XDG_RUNTIME_DIR:-/tmp}/ryogami.sock"
 for _ in {1..30}; do
-  [[ -S "$socket" ]] && exec /usr/bin/ryogami "$@"
+  if [[ -S "$socket" ]]; then
+    /usr/bin/ryogami "$@"
+    status=$?
+    bazzite-ryoku-sync-border 2>/dev/null || true
+    exit "$status"
+  fi
   sleep 0.1
 done
 printf 'Ryoku wallpaper service did not become ready.\n' >&2
