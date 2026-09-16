@@ -117,7 +117,7 @@ install -Dm644 /ctx/system_files/usr/lib/systemd/user/ryogami.service /usr/lib/s
 # Keep the showroom wallpaper workflow the user requested: compact picker,
 # random wallpaper, then the separate full Ryogami library.
 sed -i \
-  's|hl.bind(K(mod .. " + W"),         hl.dsp.exec_cmd("ryogami wallpaper ui"))|hl.bind(K(mod .. " + W"),         hl.dsp.global("ryoku:wallpaper-menu"))|' \
+  's|hl.bind(K(mod .. " + W"),         hl.dsp.exec_cmd("ryogami wallpaper ui"))|hl.bind(K(mod .. " + W"),         hl.dsp.exec_cmd("ryoku-shell menu wallpaper"))|' \
   /usr/share/ryoku/hyprland-default/modules/binds.lua
 sed -i \
   '/hl.bind(K(mod .. " + SHIFT + W"), hl.dsp.exec_cmd("ryogami wallpaper random"))/a hl.bind(K(mod .. " + ALT + W"),   hl.dsp.exec_cmd("ryogami wallpaper ui"))' \
@@ -199,6 +199,7 @@ test -f /etc/xdg/xdg-desktop-portal/hyprland-portals.conf
 test -f /usr/lib/qt6/qml/Ryoku/Blobs/qmldir
 test -f /usr/share/ryoku-source/ryoku/shell/quickshell/shell/shell.qml
 test -x /usr/share/ryoku-source/ryoku/shell/ipc/ryoku-shell
+grep -Fq 'ryoku-shell menu wallpaper' /usr/share/ryoku/hyprland-default/modules/binds.lua
 grep -Fq '/var/lib/flatpak/exports/share/icons' /usr/share/ryoku-source/ryoku/shell/ipc/icons.go
 grep -Fq 'df -B1 --output=used,size \"$HOME\"' /usr/share/ryoku-source/ryoku/shell/quickshell/shell/services/StatsFeed.qml
 test -f /usr/share/ryoku-source/ryoku/hub/quickshell/shell.qml
