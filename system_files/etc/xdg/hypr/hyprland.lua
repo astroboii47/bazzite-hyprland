@@ -90,8 +90,8 @@ hl.bind(mod .. " + K", hl.dsp.exec_cmd("bazzite-hyprland-cheatsheet"))
 -- layout is selected in Desktop > Pickers. The full Ryogami library is a
 -- separate app and remains one chord away.
 hl.bind(mod .. " + W", hl.dsp.global("ryoku:wallpaper-menu"))
-hl.bind(mod .. " + SHIFT + W", hl.dsp.exec_cmd("bazzite-ryogami wallpaper ui"))
-hl.bind(mod .. " + CTRL + W", hl.dsp.exec_cmd("bazzite-ryogami wallpaper random"))
+hl.bind(mod .. " + SHIFT + W", hl.dsp.exec_cmd("bazzite-ryogami wallpaper random"))
+hl.bind(mod .. " + ALT + W", hl.dsp.exec_cmd("bazzite-ryogami wallpaper ui"))
 hl.bind(mod .. " + comma", hl.dsp.exec_cmd("ryoku-shell hub open"))
 hl.bind(mod .. " + SHIFT + comma", hl.dsp.exec_cmd("flock -n -o /tmp/ryostore.lock qs -c ryostore"))
 hl.bind(mod .. " + ALT + M", hl.dsp.exec_cmd("wdisplays"))
