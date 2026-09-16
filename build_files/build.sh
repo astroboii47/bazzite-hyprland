@@ -166,7 +166,7 @@ test -f /usr/lib/systemd/user/ryotunesd.socket
 test -f /usr/lib/systemd/user/ryotunesd.service
 test -f /usr/share/ryotunes/client/App.qml
 test -e /usr/lib64/libmpv.so.2
-test -x /usr/local/bin/matugen
+test -x /usr/bin/matugen
 grep -q '^Exec=.*qs -c ryostore$' /usr/share/applications/ryostore.desktop
 grep -q '^Exec=ryoku-shell hub open$' /usr/share/applications/ryoku-hub.desktop
 grep -q '^org.freedesktop.impl.portal.ScreenCast=hyprland' /etc/xdg/xdg-desktop-portal/hyprland-portals.conf

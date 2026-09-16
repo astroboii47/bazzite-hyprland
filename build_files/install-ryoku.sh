@@ -27,7 +27,7 @@ curl --fail --location --silent --show-error \
   -o "$matugen_archive"
 echo '8a5575111a3f49f54bf5bedd735fe56ab7afb569a75c0895cd48e7314045b4d4  '"$matugen_archive" | sha256sum -c -
 tar -xzf "$matugen_archive" -C "$src"
-install -Dm755 "$src/matugen" /usr/local/bin/matugen
+install -m755 "$src/matugen" /usr/bin/matugen
 
 # Flatpak exports its application icons outside the normal XDG icon roots.
 # Include both the system and per-user export trees when Ryoku builds the dock
@@ -273,7 +273,7 @@ test -x /usr/bin/ryotunes-qml
 ! ldd /usr/bin/ryotunesd | grep -q 'not found'
 ! ldd /usr/bin/ryotunes | grep -q 'not found'
 test -e /usr/lib64/libmpv.so.2
-test -x /usr/local/bin/matugen
+test -x /usr/bin/matugen
 test -x /usr/bin/quickshell
 test -x /usr/bin/ryoku-monitor
 test -x /usr/bin/ryoku-hw-backlight
