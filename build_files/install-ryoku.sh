@@ -74,7 +74,7 @@ ln -s /usr/bin/ryoku-shell /usr/share/ryoku-source/ryoku/shell/ipc/ryoku-shell
 
 # Bazzite's / mount is the immutable deployment. Report the user's writable
 # filesystem in the storage card, which is the meaningful capacity on bootc.
-sed -i 's|df -B1 --output=used,size / 2>/dev/null|df -B1 --output=used,size \"$HOME\" 2>/dev/null|' \
+sed -i 's|df -B1 --output=used,size / 2>/dev/null|df -B1 --output=used,size \\\"$HOME\\\" 2>/dev/null|' \
   /usr/share/ryoku-source/ryoku/shell/quickshell/shell/services/StatsFeed.qml
 install -d /usr/lib/qt6/qml/Ryoku/Ui /usr/lib/qt6/qml/Ryoku/FrameBars /usr/lib/qt6/qml/Ryoku/PluginKit
 cp -a "$src/ryoku/ui/." /usr/lib/qt6/qml/Ryoku/Ui/
