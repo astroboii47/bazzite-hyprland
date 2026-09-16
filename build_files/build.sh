@@ -28,6 +28,9 @@ dnf5 swap -y libfprint libfprint-tod
 # fallback in SDDM.
 dnf5 install -y \
   brightnessctl \
+  bluez \
+  bluez-tools \
+  cava \
   cmake \
   cliphist \
   gcc-c++ \
@@ -46,24 +49,40 @@ dnf5 install -y \
   hyprpolkitagent \
   hyprshutdown \
   hyprshot \
+  hyprsunset \
+  ImageMagick \
+  iw \
+  jq \
+  libqalculate \
+  matugen \
   network-manager-applet \
+  nftables \
   ninja-build \
   pavucontrol \
   playerctl \
+  power-profiles-daemon \
   quickshell \
   qt6-qtbase-devel \
   qt6-qtdeclarative-devel \
   qt6-qtmultimedia-devel \
+  qt6-qtsvg \
   qt6-qtshadertools-devel \
   slurp \
   swaync \
+  tesseract \
+  tesseract-langpack-eng \
   uwsm \
   unzip \
+  upower \
   waybar \
   wayland-devel \
   wayland-protocols-devel \
   wdisplays \
+  wf-recorder \
   wl-clipboard \
+  wtype \
+  zbar \
+  ddcutil \
   xdg-desktop-portal-hyprland
 
 /ctx/install-ryoku.sh
@@ -77,6 +96,9 @@ test -x /usr/bin/bazzite-ryoku-first-login
 test -x /usr/bin/bazzite-ryoku-repair
 test -x /usr/bin/bazzite-display-scale
 test -x /usr/bin/wdisplays
+for tool in cava convert ddcutil hyprsunset jq qalc tesseract upowerctl wf-recorder wtype zbarimg; do
+  command -v "$tool" >/dev/null
+done
 test -f /usr/lib/systemd/user/ryoku-shell.service
 test -f /usr/lib64/libfprint-2-tod.so.1
 test -d /usr/lib64/libfprint-2/tod-1
