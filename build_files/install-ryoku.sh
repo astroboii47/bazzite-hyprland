@@ -14,6 +14,13 @@ curl --fail --location --silent --show-error \
   "https://github.com/Ryoku-dev/ryoku-arch/archive/${ryoku_commit}.tar.gz" \
   | tar -xz --strip-components=1 -C "$src"
 
+# Flatpak exports its application icons outside the normal XDG icon roots.
+# Include both the system and per-user export trees when Ryoku builds the dock
+# index; otherwise native apps resolve while many Flatpak app tiles are blank.
+sed -i '/filepath.Join(home, ".icons"),/a\        "/var/lib/flatpak/exports/share/icons",\
+        filepath.Join(home, ".local", "share", "flatpak", "exports", "share", "icons"),' \
+  "$src/ryoku/shell/ipc/icons.go"
+
 # Ryoku's geometry assumes its brand and icon fonts. Without them Qt silently
 # substitutes wider system faces, making the bar spacing and symbols look wrong.
 google_fonts_commit="1ac2012c34919f5fa2675aacf723fa98edb30b5f"
@@ -184,6 +191,7 @@ test -f /etc/xdg/xdg-desktop-portal/hyprland-portals.conf
 test -f /usr/lib/qt6/qml/Ryoku/Blobs/qmldir
 test -f /usr/share/ryoku-source/ryoku/shell/quickshell/shell/shell.qml
 test -x /usr/share/ryoku-source/ryoku/shell/ipc/ryoku-shell
+grep -Fq '/var/lib/flatpak/exports/share/icons' /usr/share/ryoku-source/ryoku/shell/ipc/icons.go
 grep -Fq 'df -B1 --output=used,size \"$HOME\"' /usr/share/ryoku-source/ryoku/shell/quickshell/shell/services/StatsFeed.qml
 test -f /usr/share/ryoku-source/ryoku/hub/quickshell/shell.qml
 grep -q 'pam_fprintd.so' /usr/share/ryoku/lockscreen/qylock/quickshell-lockscreen/assets/pam/ryoku-lock

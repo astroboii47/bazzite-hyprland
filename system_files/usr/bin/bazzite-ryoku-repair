@@ -5,6 +5,23 @@ if [[ "${1:-}" == "--reset-config" ]]; then
   config_dir="${XDG_CONFIG_HOME:-$HOME/.config}/hypr"
   mkdir -p "$config_dir"
   bazzite-ryoku-first-login --refresh-hypr
+
+  # Resetting the desktop must reconnect all three colour consumers to the
+  # wallpaper: Ryogami writes the palette, the shell reads theme.json, and
+  # Hyprland otherwise retains an old explicit border colour in settings.lua.
+  # Keep the user's other theme preferences intact.
+  theme_dir="${XDG_CONFIG_HOME:-$HOME/.config}/ryoku"
+  mkdir -p "$theme_dir"
+  if [[ -f "$theme_dir/theme.json" ]]; then
+    tmp="$(mktemp "$theme_dir/theme.json.XXXXXX")"
+    jq 'del(.scheme) | .followWallpaper = true' "$theme_dir/theme.json" > "$tmp"
+    mv "$tmp" "$theme_dir/theme.json"
+  else
+    printf '%s\n' '{"followWallpaper":true}' > "$theme_dir/theme.json"
+  fi
+  if [[ -f "$config_dir/settings.lua" ]]; then
+    sed -i '/\["col\.active_border"\]/d; /\["col\.inactive_border"\]/d' "$config_dir/settings.lua"
+  fi
   hyprctl reload config-only 2>/dev/null || hyprctl reload
 fi
 
@@ -15,5 +32,9 @@ dbus-update-activation-environment --systemd --all
 systemctl --user daemon-reload
 systemctl --user reset-failed ryoku-shell.service ryogami.service 2>/dev/null || true
 systemctl --user restart ryoku-shell.service ryogami.service
+# Reapply the current wallpaper after the services are alive. This regenerates
+# the palette and pushes it to the bar, widgets, and compositor border without
+# replacing the user's chosen picture.
+bazzite-ryogami wallpaper restore 2>/dev/null || true
 pkill -x xwaylandvideobridge 2>/dev/null || true
 printf '%s\n' 'Ryoku configuration and services refreshed.'
