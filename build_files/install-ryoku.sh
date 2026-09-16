@@ -235,6 +235,7 @@ cp -a "$src/ryoku/lockscreen/qylock/." /usr/share/ryoku/lockscreen/qylock/
 sed -i 's/pam_fprintd_grosshack\.so/pam_fprintd.so/g' \
   /usr/share/ryoku/lockscreen/qylock/quickshell-lockscreen/assets/pam/ryoku-lock
 
+set -x
 test -x /usr/bin/ryoku-shell
 test -x /usr/bin/ryogami
 test -x /usr/bin/ryoku-hub
