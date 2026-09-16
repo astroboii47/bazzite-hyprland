@@ -66,6 +66,13 @@ fc-cache -f
 # maintenance. Build the pinned CLI from the same source as the shell.
 (cd "$src/ryoku/cli" && CGO_ENABLED=0 go build -trimpath -mod=vendor -o /usr/bin/ryoku .)
 
+# Ryogami's upstream daemon launches its wallpaper UI as `quickshell`, while
+# Fedora names the same executable `qs`.  Keep the upstream app intact and
+# expose the name it requests so the real Ryogami Wallpapers window can start.
+if ! command -v quickshell >/dev/null; then
+  ln -s /usr/bin/qs /usr/bin/quickshell
+fi
+
 # The compiled metaball renderer creates Ryoku's floating frame shapes.
 RYOKU_BLOBS_BUILD="$src/build-blobs" \
   "$src/ryoku/shell/plugin/build.sh" /usr/lib/qt6/qml
@@ -181,6 +188,7 @@ test -x /usr/bin/ryogami
 test -x /usr/bin/ryoku-hub
 test -x /usr/bin/ryostore
 test -x /usr/bin/ryoku
+test -x /usr/bin/quickshell
 test -x /usr/bin/ryoku-monitor
 test -x /usr/bin/ryoku-gpu
 test -x /usr/bin/ryoku-power
