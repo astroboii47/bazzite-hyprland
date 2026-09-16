@@ -325,6 +325,10 @@ install -Dm755 "$src/system/hardware/power/ryoku-idle" /usr/bin/ryoku-idle
 install -Dm755 "$src/system/hardware/power/ryoku-clamshell" /usr/bin/ryoku-clamshell
 install -Dm644 "$src/system/hardware/power/logind-ryoku-lid.conf" \
   /etc/systemd/logind.conf.d/10-ryoku-lid.conf
+# A close immediately after resume otherwise lands in logind's default
+# 30-second holdoff window and is deferred until the lid is opened again.
+# This laptop should suspend on every real close event.
+printf '%s\n' 'HoldoffTimeoutSec=0' >> /etc/systemd/logind.conf.d/10-ryoku-lid.conf
 install -Dm644 "$src/system/hardware/power/47-ryoku-power.rules" /usr/share/polkit-1/rules.d/47-ryoku-power.rules
 install -Dm755 "$src/system/hardware/audio/ryoku-bt-audio" /usr/bin/ryoku-bt-audio
 install -Dm755 "$src/system/hardware/audio/ryoku-mic" /usr/bin/ryoku-mic
@@ -372,6 +376,7 @@ test -x /usr/bin/ryoku-power
 test -x /usr/bin/ryoku-idle
 test -x /usr/bin/ryoku-clamshell
 test -f /etc/systemd/logind.conf.d/10-ryoku-lid.conf
+grep -q '^HoldoffTimeoutSec=0$' /etc/systemd/logind.conf.d/10-ryoku-lid.conf
 test -x /usr/bin/ryoku-bt-audio
 test -x /usr/bin/ryoku-mic
 test -x /usr/bin/ryoku-restart-audio
