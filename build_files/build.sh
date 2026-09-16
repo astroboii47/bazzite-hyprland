@@ -109,6 +109,7 @@ for tool in cava convert ddcutil hyprsunset jq powerprofilesctl qalc tesseract u
   printf 'Validating runtime tool: %s\n' "$tool"
   command -v "$tool" >/dev/null
 done
+set -x
 test -f /usr/lib/systemd/user/ryoku-shell.service
 test -f /usr/lib64/libfprint-2-tod.so.1
 test -d /usr/lib64/libfprint-2/tod-1
@@ -129,3 +130,4 @@ grep -q '^Exec=.*qs -c ryostore$' /usr/share/applications/ryostore.desktop
 grep -q '^Exec=ryoku-shell hub open$' /usr/share/applications/ryoku-hub.desktop
 grep -q '^org.freedesktop.impl.portal.ScreenCast=hyprland' /etc/xdg/xdg-desktop-portal/hyprland-portals.conf
 test -f /etc/xdg/waybar/config.jsonc
+set +x
