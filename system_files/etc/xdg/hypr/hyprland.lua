@@ -3,7 +3,6 @@
 
 local terminal = "konsole"
 local fileManager = "dolphin"
-local launcher = "fuzzel"
 local mod = "SUPER"
 
 hl.monitor({ output = "", mode = "preferred", position = "auto", scale = "auto" })
@@ -66,7 +65,7 @@ hl.gesture({ fingers = 3, direction = "horizontal", action = "workspace" })
 
 -- Omarchy-style core workflow.
 hl.bind(mod .. " + Return", hl.dsp.exec_cmd(terminal))
-hl.bind(mod .. " + Space", hl.dsp.exec_cmd(launcher))
+hl.bind(mod .. " + Space", hl.dsp.exec_cmd("ryoku-shell launcher"))
 hl.bind(mod .. " + E", hl.dsp.exec_cmd(fileManager))
 hl.bind(mod .. " + K", hl.dsp.exec_cmd("bazzite-hyprland-cheatsheet"))
 hl.bind(mod .. " + W", hl.dsp.exec_cmd("ryogami wallpaper ui"))

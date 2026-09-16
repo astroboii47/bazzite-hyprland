@@ -17,6 +17,8 @@ curl --fail --location --silent --show-error \
 # Native shell controller and wallpaper service.
 (cd "$src/ryoku/shell/ipc" && CGO_ENABLED=0 go build -trimpath -mod=vendor -o /usr/bin/ryoku-shell .)
 (cd "$src/ryoku/shell/ryogami/daemon" && CGO_ENABLED=0 go build -trimpath -o /usr/bin/ryogami .)
+# Settings Hub backend used by the real Ryoku configuration window.
+(cd "$src/ryoku/hub/backend" && CGO_ENABLED=0 go build -trimpath -o /usr/bin/ryoku-hub .)
 
 # The compiled metaball renderer creates Ryoku's floating frame shapes.
 RYOKU_BLOBS_BUILD="$src/build-blobs" \
@@ -47,5 +49,7 @@ cp -a "$src/ryoku/lockscreen/qylock/." /usr/share/ryoku/lockscreen/qylock/
 
 test -x /usr/bin/ryoku-shell
 test -x /usr/bin/ryogami
+test -x /usr/bin/ryoku-hub
 test -f /usr/lib/qt6/qml/Ryoku/Blobs/qmldir
 test -f /usr/share/ryoku-source/ryoku/shell/quickshell/shell/shell.qml
+test -f /usr/share/ryoku-source/ryoku/hub/quickshell/shell.qml
