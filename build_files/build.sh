@@ -61,6 +61,7 @@ dnf5 install -y \
   libdrm-devel \
   libinput-devel \
   libxkbcommon-devel \
+  libsoup3-devel \
   matugen \
   network-manager-applet \
   nftables \
@@ -87,6 +88,7 @@ dnf5 install -y \
   mpv \
   mpv-libs \
   webkit2gtk4.1 \
+  webkit2gtk4.1-devel \
   libappindicator-gtk3 \
   yt-dlp \
   slurp \
