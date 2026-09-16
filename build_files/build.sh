@@ -103,6 +103,7 @@ dnf5 remove -y swaync waybar || true
 dnf5 clean all
 
 # Catch missing session, portal, and configuration files during the image build.
+set -x
 test -x /usr/bin/Hyprland
 test -x /usr/bin/ryoku-shell
 test -x /usr/bin/ryostore
