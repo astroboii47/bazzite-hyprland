@@ -20,6 +20,9 @@ refresh_hypr() {
     cp -a "$hypr_config/hyprland.lua" "$backup"
   fi
   cp -a "$hypr_defaults/hyprland.lua" "$hypr_config/hyprland.lua"
+  # The prototype linked this file into /etc/xdg. Remove that link before the
+  # directory copy so cp never follows it and attempts to write system files.
+  rm -f "$hypr_config/modules/binds.lua"
   cp -a "$hypr_defaults/modules" "$hypr_config/"
   cp -a "$hypr_defaults/scripts" "$hypr_config/"
   for file in hypridle.conf xdph.conf monitors_user.lua.example; do
