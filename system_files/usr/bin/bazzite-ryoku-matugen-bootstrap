@@ -13,6 +13,14 @@ install -d "$config_dir/templates" "$cache_dir"
 if [[ ! -f "$config_dir/config.toml" ]]; then
   install -m 644 "$source_dir/config.toml" "$config_dir/config.toml"
 fi
+if ! grep -q '^\[templates.fuzzel\]$' "$config_dir/config.toml"; then
+  cat >> "$config_dir/config.toml" <<'EOF'
+
+[templates.fuzzel]
+input_path = "~/.config/matugen/templates/fuzzel.ini"
+output_path = "~/.config/fuzzel/fuzzel.ini"
+EOF
+fi
 for template in "$source_dir/templates"/*; do
   name="$(basename "$template")"
   [[ -e "$config_dir/templates/$name" ]] || install -m 644 "$template" "$config_dir/templates/$name"

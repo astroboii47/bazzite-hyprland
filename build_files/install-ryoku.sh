@@ -41,6 +41,39 @@ sed -i \
 grep -Fq 'active = "{{colors.primary.default.hex}}"' "$src/ryoku/shell/matugen/templates/hypr-colors.lua"
 grep -Fq 'hyprRGB(c.Primary)' "$src/ryoku/shell/ipc/matugen.go"
 
+# Fuzzel is kept as the lightweight launcher fallback. Its old system-wide
+# config pinned the selected result to Ryoku red; render it through the same
+# Matugen palette as the shell instead.
+cat >> "$src/ryoku/shell/matugen/config.toml" <<'EOF'
+
+[templates.fuzzel]
+input_path = "~/.config/matugen/templates/fuzzel.ini"
+output_path = "~/.config/fuzzel/fuzzel.ini"
+EOF
+cat > "$src/ryoku/shell/matugen/templates/fuzzel.ini" <<'EOF'
+[main]
+font=monospace:size=12
+prompt="  SEARCH  /  "
+width=48
+lines=12
+horizontal-pad=22
+vertical-pad=18
+inner-pad=10
+
+[colors]
+background={{colors.surface.default.hex}}f2
+text={{colors.on_surface.default.hex}}ff
+match={{colors.primary.default.hex}}ff
+selection={{colors.primary.default.hex}}ff
+selection-text={{colors.on_primary.default.hex}}ff
+selection-match={{colors.on_primary.default.hex}}ff
+border={{colors.primary.default.hex}}ff
+
+[border]
+width=1
+radius=3
+EOF
+
 # Ryowalls was Ryoku's original standalone wallpaper studio.  Upstream retired
 # it in favour of the embedded Ryogami picker, but the user explicitly asked
 # for that separate application.  Install the actual final Ryowalls source from
