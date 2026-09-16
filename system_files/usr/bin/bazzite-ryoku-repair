@@ -1,0 +1,11 @@
+#!/usr/bin/bash
+set -euo pipefail
+
+# Clear only the obsolete prototype surface, then restart the two real Ryoku
+# services against the current Wayland session.
+pkill -f 'quickshell.*bazzite-ryoku' 2>/dev/null || true
+dbus-update-activation-environment --systemd --all
+systemctl --user daemon-reload
+systemctl --user reset-failed ryoku-shell.service ryogami.service 2>/dev/null || true
+systemctl --user restart ryoku-shell.service ryogami.service
+printf '%s\n' 'Ryoku shell and wallpaper services restarted.'

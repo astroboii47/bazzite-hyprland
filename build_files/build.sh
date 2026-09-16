@@ -4,6 +4,11 @@ set -euo pipefail
 # Copy system-wide defaults and helper scripts into the image.
 cp -avf /ctx/system_files/. /
 
+# These were the early hand-built Ryoku imitation. The real upstream shell is
+# installed below; do not ship two competing shell implementations.
+rm -rf /etc/xdg/quickshell/bazzite-ryoku
+rm -f /usr/bin/bazzite-ryoku-shell /usr/bin/bazzite-ryoku-theme /usr/bin/bazzite-ryoku-wallpaper
+
 # Fedora 43 no longer carries Hyprland. This maintained COPR provides current
 # Fedora 43/44 builds for both x86_64 and aarch64.
 fedora_version="$(. /etc/os-release && printf '%s' "$VERSION_ID")"
@@ -68,6 +73,7 @@ dnf5 clean all
 test -x /usr/bin/Hyprland
 test -x /usr/bin/ryoku-shell
 test -x /usr/bin/bazzite-ryoku-first-login
+test -x /usr/bin/bazzite-ryoku-repair
 test -x /usr/bin/wdisplays
 test -f /usr/lib/systemd/user/ryoku-shell.service
 test -f /usr/lib64/libfprint-2-tod.so.1
@@ -77,13 +83,8 @@ test -f /var/lib/fprint/fw/bcmDeviceFirmwareCitadel_7.bin
 test -f /usr/share/wayland-sessions/hyprland-uwsm.desktop
 test -x /usr/libexec/xdg-desktop-portal-hyprland
 test -f /etc/xdg/hypr/hyprland.lua
-test -f /etc/xdg/quickshell/bazzite-ryoku/shell.qml
-test -x /usr/bin/bazzite-ryoku-shell
-test -x /usr/bin/bazzite-ryoku-theme
-test -x /usr/bin/bazzite-ryoku-wallpaper
+test ! -e /etc/xdg/quickshell/bazzite-ryoku
+test ! -e /usr/bin/bazzite-ryoku-shell
+test -f /usr/share/ryoku-source/ryoku/shell/quickshell/shell/shell.qml
+test -f /usr/share/ryoku-source/ryoku/hub/quickshell/shell.qml
 test -f /etc/xdg/waybar/config.jsonc
-
-# Validate the QML during the image build when Fedora's Qt tooling is present.
-if command -v qmllint >/dev/null 2>&1; then
-  qmllint /etc/xdg/quickshell/bazzite-ryoku/shell.qml
-fi
