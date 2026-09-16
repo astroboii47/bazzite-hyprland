@@ -56,6 +56,7 @@ hl.animation({ leaf = "workspaces", enabled = true, speed = 4, bezier = "easeOut
 
 hl.on("hyprland.start", function()
     hl.exec_cmd("bazzite-ryoku-first-login; systemctl --user daemon-reload; systemctl --user restart ryoku-shell.service ryogami.service")
+    hl.exec_cmd("sleep 1; theme=$(gsettings get org.gnome.desktop.interface cursor-theme 2>/dev/null | tr -d \"'\"); hyprctl setcursor \"${theme:-default}\" 18")
     hl.exec_cmd("sleep 1; bazzite-display-scale --apply")
     hl.exec_cmd("hypridle")
     hl.exec_cmd("hyprpolkitagent")
@@ -138,10 +139,8 @@ hl.permission("/usr/(lib|libexec|lib64)/xdg-desktop-portal-hyprland", "screencop
 
 hl.window_rule({ name = "float-dialogs", match = { title = "^(Open File|Save File|Authentication Required)$" }, float = true })
 
--- KDE's Xwayland Video Bridge deliberately creates a capture window. KWin
--- hides it automatically, while Hyprland needs an explicit rule or it becomes
--- a large black tile. Keep it mapped for X11 screen sharing, but invisible and
--- outside the tiling layout.
+-- Fallback for a bridge process inherited during an image upgrade. First-login
+-- disables its future autostart; this keeps any already-running copy invisible.
 hl.window_rule({
     name             = "hide-xwayland-video-bridge",
     match            = { class = "^xwaylandvideobridge$" },

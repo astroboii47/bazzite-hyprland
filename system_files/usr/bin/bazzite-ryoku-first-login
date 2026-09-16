@@ -6,6 +6,22 @@ lock="$HOME/.local/share/quickshell-lockscreen"
 themes="$HOME/.local/share/qylock/themes"
 
 mkdir -p "$walls" "$HOME/.local/share" "$HOME/.config/qylock"
+
+# Ryoku's dock and launcher resolve desktop icons through the active GTK theme.
+# Use the icon set its layouts were designed and tested with.
+gsettings set org.gnome.desktop.interface icon-theme 'Papirus-Dark' 2>/dev/null || true
+gsettings set org.gnome.desktop.interface cursor-size 18 2>/dev/null || true
+
+# KDE starts this compatibility bridge globally. Hyprland uses its native
+# portal, while the bridge appears as a fake recording app in Ryoku's dock.
+mkdir -p "$HOME/.config/autostart"
+cat > "$HOME/.config/autostart/org.kde.xwaylandvideobridge.desktop" <<'EOF'
+[Desktop Entry]
+Type=Application
+Name=Xwayland Video Bridge
+Hidden=true
+EOF
+pkill -x xwaylandvideobridge 2>/dev/null || true
 if ! find "$walls" -maxdepth 1 -type f -print -quit | grep -q .; then
   cp -a /usr/share/ryoku/wallpapers/. "$walls/"
 fi

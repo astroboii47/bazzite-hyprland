@@ -59,6 +59,7 @@ dnf5 install -y \
   nftables \
   ninja-build \
   pavucontrol \
+  papirus-icon-theme \
   playerctl \
   qalculate \
   quickshell \
@@ -112,6 +113,7 @@ test -f /var/lib/fprint/fw/bcmDeviceFirmwareCitadel_7.bin
 test -f /usr/share/wayland-sessions/hyprland-uwsm.desktop
 test -x /usr/libexec/xdg-desktop-portal-hyprland
 test -f /etc/xdg/hypr/hyprland.lua
+test -f /usr/share/icons/Papirus-Dark/index.theme
 grep -q '^    lock_cmd = ryoku-shell lock$' /etc/xdg/hypr/hypridle.conf
 grep -q '^    before_sleep_cmd = ryoku-shell lock$' /etc/xdg/hypr/hypridle.conf
 test ! -e /etc/xdg/quickshell/bazzite-ryoku
