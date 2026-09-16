@@ -162,6 +162,24 @@ curl --fail --location --silent --show-error \
 mkdir -p "$ryotunes_root"
 tar --zstd -xf "$ryotunes_pkg" -C "$ryotunes_root"
 cp -a "$ryotunes_root/usr/." /usr/
+# Ensure the native launcher always has its socket-activated daemon available.
+mv /usr/bin/ryotunes /usr/libexec/ryotunes-bin
+cat > /usr/bin/ryotunes <<'EOF'
+#!/bin/sh
+systemctl --user start ryotunesd.socket
+exec /usr/libexec/ryotunes-bin "$@"
+EOF
+chmod 755 /usr/bin/ryotunes
+
+# Ryoku's default pointer is Bibata Modern Ice: a compact white, rounded arrow
+# with a dark edge. The upstream Arch package is not available to Fedora, so
+# install the official XCursor release directly.
+bibata_version="2.0.7"
+curl --fail --location --silent --show-error \
+  "https://github.com/ful1e5/Bibata_Cursor/releases/download/v${bibata_version}/Bibata-Modern-Ice.tar.xz" \
+  -o "$src/Bibata-Modern-Ice.tar.xz"
+tar -xJf "$src/Bibata-Modern-Ice.tar.xz" -C /usr/share/icons
+test -d /usr/share/icons/Bibata-Modern-Ice/cursors
 
 # Ryogami's upstream daemon launches its wallpaper UI as `quickshell`, while
 # Fedora names the same executable `qs`.  Keep the upstream app intact and
@@ -317,7 +335,7 @@ test -x /usr/bin/ryotunesd
 test -x /usr/bin/ryotunes-cli
 test -x /usr/bin/ryotunes-qml
 ! ldd /usr/bin/ryotunesd | grep -q 'not found'
-! ldd /usr/bin/ryotunes | grep -q 'not found'
+! ldd /usr/libexec/ryotunes-bin | grep -q 'not found'
 test -e /usr/lib64/libmpv.so.2
 test -x /usr/bin/matugen
 test -x /usr/bin/quickshell
@@ -342,6 +360,7 @@ test -f /usr/lib/systemd/user/ryotunesd.socket
 test -f /usr/lib/systemd/user/ryotunesd.service
 test -f /usr/share/ryotunes/client/App.qml
 test -f /usr/share/ryotunes/skins/paper/skin.json
+test -d /usr/share/icons/Bibata-Modern-Ice/cursors
 test -f /usr/share/applications/ryoku-hub.desktop
 test -f /etc/xdg/xdg-desktop-portal/hyprland-portals.conf
 test -f /usr/lib/qt6/qml/Ryoku/Blobs/qmldir
