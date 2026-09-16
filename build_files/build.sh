@@ -96,7 +96,8 @@ test -x /usr/bin/bazzite-ryoku-repair
 test -x /usr/bin/bazzite-display-scale
 test -x /usr/bin/powerprofilesctl
 test -x /usr/bin/wdisplays
-for tool in cava convert ddcutil hyprsunset jq powerprofilesctl qalc tesseract upowerctl wf-recorder wtype zbarimg; do
+for tool in cava convert ddcutil hyprsunset jq powerprofilesctl qalc tesseract upower wf-recorder wtype zbarimg; do
+  printf 'Validating runtime tool: %s\n' "$tool"
   command -v "$tool" >/dev/null
 done
 test -f /usr/lib/systemd/user/ryoku-shell.service
