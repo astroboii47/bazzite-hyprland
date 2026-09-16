@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
-Name=Ryoku Wallpapers
-Comment=Browse, download, edit, and apply wallpapers
+Name=Ryogami Wallpaper Studio
+Comment=Browse, download, edit, and apply wallpapers with Ryogami
 Exec=bazzite-ryogami wallpaper ui
 Icon=ryoku-wallpapers
 Terminal=false

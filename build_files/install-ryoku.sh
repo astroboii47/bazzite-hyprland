@@ -15,6 +15,17 @@ curl --fail --location --silent --show-error \
   "https://github.com/Ryoku-dev/ryoku-arch/archive/${ryoku_commit}.tar.gz" \
   | tar -xz --strip-components=1 -C "$src"
 
+# Ryowalls was Ryoku's original standalone wallpaper studio.  Upstream retired
+# it in favour of the embedded Ryogami picker, but the user explicitly asked
+# for that separate application.  Install the actual final Ryowalls source from
+# the commit immediately before it was retired; this is not a replacement UI.
+ryowalls_commit="3985f88a1f8d54d61e225585288ec675032a225a"
+ryowalls_src="$src/ryowalls-source"
+mkdir -p "$ryowalls_src"
+curl --fail --location --silent --show-error \
+  "https://github.com/Ryoku-dev/ryoku-arch/archive/${ryowalls_commit}.tar.gz" \
+  | tar -xz --strip-components=1 -C "$ryowalls_src"
+
 # Ryoku's palette controller uses Matugen 4 options such as source-colour
 # selection and lightness controls. Fedora 43 ships an older CLI that accepts
 # the start of the command then rejects those options, leaving the UI on its
@@ -168,6 +179,15 @@ install -Dm644 "$src/ryoku/hub/ryoku-hub.desktop" /usr/share/applications/ryoku-
 install -Dm644 "$src/ryoku/assets/brand/logo.svg" /usr/share/icons/hicolor/scalable/apps/ryoku-hub.svg
 install -Dm644 "$src/ryoku/shell/portals/hyprland-portals.conf" /etc/xdg/xdg-desktop-portal/hyprland-portals.conf
 
+# Keep the original standalone Ryowalls application beside the current
+# Ryogami picker.  It shares the current daemon for applying and theming the
+# wallpaper, while retaining the separate library / preview-studio workflow.
+install -d /etc/xdg/quickshell/ryowalls
+cp -a "$ryowalls_src/ryoku/apps/ryowalls/quickshell/." /etc/xdg/quickshell/ryowalls/
+install -Dm755 "$ryowalls_src/ryoku/apps/ryowalls/bin/ryowalls" /usr/bin/ryowalls
+install -Dm644 "$ryowalls_src/ryoku/apps/ryowalls/ryowalls.desktop" /usr/share/applications/ryowalls.desktop
+install -Dm644 "$ryowalls_src/ryoku/apps/ryowalls/quickshell/logo.svg" /usr/share/icons/hicolor/scalable/apps/ryowalls.svg
+
 # Ship Ryoku's complete Hyprland configuration as the single source of truth.
 # The prior hand-written starter config bypassed `settings.lua`, which meant
 # Hub changes and wallpaper colours were immediately overwritten by defaults.
@@ -286,6 +306,9 @@ test -x /usr/bin/ryoku-mic
 test -x /usr/bin/ryoku-restart-audio
 test -f /etc/xdg/quickshell/ryostore/shell.qml
 test -f /etc/xdg/quickshell/ryovm/shell.qml
+test -f /etc/xdg/quickshell/ryowalls/shell.qml
+test -x /usr/bin/ryowalls
+test -f /usr/share/applications/ryowalls.desktop
 test -f /usr/share/applications/ryostore.desktop
 test -f /usr/share/applications/ryovm.desktop
 test -f /usr/share/applications/ryotunes.desktop
