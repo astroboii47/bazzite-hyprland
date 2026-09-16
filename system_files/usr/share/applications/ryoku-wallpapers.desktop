@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Ryoku Wallpapers
+Comment=Browse, download, edit, and apply wallpapers
+Exec=bazzite-ryogami wallpaper ui
+Icon=preferences-desktop-wallpaper
+Terminal=false
+Categories=Settings;Utility;
+Keywords=wallpaper;background;ryogami;ryoku;wallhaven;

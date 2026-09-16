@@ -103,6 +103,8 @@ test -x /usr/bin/bazzite-ryoku-first-login
 test -x /usr/bin/bazzite-ryoku-repair
 test -x /usr/bin/bazzite-display-scale
 test -x /usr/bin/bazzite-ryogami
+test -f /usr/share/applications/ryoku-wallpapers.desktop
+grep -q 'ryoku:wallpaper-menu' /etc/xdg/hypr/hyprland.lua
 grep -q 'modules/binds.lua' /usr/bin/bazzite-ryoku-first-login
 grep -q 'config.json.example' /usr/bin/bazzite-ryoku-first-login
 test -x /usr/bin/powerprofilesctl

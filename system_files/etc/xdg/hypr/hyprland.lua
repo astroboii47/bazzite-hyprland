@@ -86,8 +86,12 @@ hl.bind(mod .. " + Return", hl.dsp.exec_cmd(terminal))
 hl.bind(mod .. " + Space", hl.dsp.global("ryoku:launcher"))
 hl.bind(mod .. " + E", hl.dsp.exec_cmd(fileManager))
 hl.bind(mod .. " + K", hl.dsp.exec_cmd("bazzite-hyprland-cheatsheet"))
-hl.bind(mod .. " + W", hl.dsp.exec_cmd("bazzite-ryogami wallpaper ui"))
-hl.bind(mod .. " + SHIFT + W", hl.dsp.exec_cmd("bazzite-ryogami wallpaper random"))
+-- Match the Ryoku showroom workflow: Super+W opens the compact picker whose
+-- layout is selected in Desktop > Pickers. The full Ryogami library is a
+-- separate app and remains one chord away.
+hl.bind(mod .. " + W", hl.dsp.global("ryoku:wallpaper-menu"))
+hl.bind(mod .. " + SHIFT + W", hl.dsp.exec_cmd("bazzite-ryogami wallpaper ui"))
+hl.bind(mod .. " + CTRL + W", hl.dsp.exec_cmd("bazzite-ryogami wallpaper random"))
 hl.bind(mod .. " + comma", hl.dsp.exec_cmd("ryoku-shell hub open"))
 hl.bind(mod .. " + SHIFT + comma", hl.dsp.exec_cmd("flock -n -o /tmp/ryostore.lock qs -c ryostore"))
 hl.bind(mod .. " + ALT + M", hl.dsp.exec_cmd("wdisplays"))
