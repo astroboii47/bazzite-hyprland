@@ -126,9 +126,6 @@ test -x /usr/bin/ryotunesd
 test -x /usr/bin/ryotunes-cli
 test -x /usr/bin/ryotunes-qml
 test -x /usr/bin/ryoku-volume
-test -x /usr/bin/ryoku-monitor
-test -x /usr/bin/ryoku-gpu
-test -x /usr/bin/ryoku-power
 test -x /usr/bin/bazzite-ryoku-first-login
 test -x /usr/bin/bazzite-ryoku-repair
 test -x /usr/bin/bazzite-display-scale
