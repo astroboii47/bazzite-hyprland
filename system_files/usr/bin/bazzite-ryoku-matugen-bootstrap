@@ -1,0 +1,25 @@
+#!/usr/bin/bash
+set -euo pipefail
+
+# Ryoku's palette controller renders templates from the user's XDG config
+# directory. The controller deliberately falls back to the stock red border
+# when this directory is absent. Seed that data before the real shell daemon
+# starts, including for an existing user configuration from an earlier image.
+source_dir=/usr/share/ryoku-source/ryoku/shell/matugen
+config_dir="${XDG_CONFIG_HOME:-$HOME/.config}/matugen"
+cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/ryoku"
+
+install -d "$config_dir/templates" "$cache_dir"
+if [[ ! -f "$config_dir/config.toml" ]]; then
+  install -m 644 "$source_dir/config.toml" "$config_dir/config.toml"
+fi
+for template in "$source_dir/templates"/*; do
+  name="$(basename "$template")"
+  [[ -e "$config_dir/templates/$name" ]] || install -m 644 "$template" "$config_dir/templates/$name"
+done
+
+# This is image-owned: it maps the focused-border role to Ryoku's primary
+# wallpaper accent. Always refresh it so an old secondary-colour template
+# cannot survive an image upgrade.
+install -m 644 "$source_dir/templates/hypr-colors.lua" \
+  "$config_dir/templates/hypr-colors.lua"

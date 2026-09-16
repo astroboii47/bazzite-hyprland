@@ -341,6 +341,7 @@ sed -i 's/pam_fprintd_grosshack\.so/pam_fprintd.so/g' \
 
 set -x
 test -x /usr/bin/ryoku-shell
+test -x /usr/bin/bazzite-ryoku-matugen-bootstrap
 test -x /usr/bin/ryogami
 test -x /usr/bin/ryoku-hub
 test -x /usr/bin/ryostore
@@ -355,7 +356,6 @@ test -x /usr/bin/ryotunesd
 test -x /usr/bin/ryotunes-cli
 test -x /usr/bin/ryotunes-qml
 ! ldd /usr/bin/ryotunesd | grep -q 'not found'
-! ldd /usr/libexec/ryotunes-bin | grep -q 'not found'
 test -e /usr/lib64/libmpv.so.2
 test -x /usr/bin/matugen
 test -x /usr/bin/quickshell

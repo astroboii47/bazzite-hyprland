@@ -131,6 +131,7 @@ test -x /usr/bin/ryotunes-cli
 test -x /usr/bin/ryotunes-qml
 test -x /usr/bin/ryoku-volume
 test -x /usr/bin/bazzite-ryoku-first-login
+test -x /usr/bin/bazzite-ryoku-matugen-bootstrap
 test -x /usr/bin/bazzite-ryoku-repair
 test -x /usr/bin/bazzite-display-scale
 test -x /usr/bin/bazzite-ryogami
@@ -149,6 +150,7 @@ for tool in cava convert ddcutil hyprsunset jq powerprofilesctl qalc tesseract u
   command -v "$tool" >/dev/null
 done
 test -f /usr/lib/systemd/user/ryoku-shell.service
+grep -q '^ExecStartPre=/usr/bin/bazzite-ryoku-matugen-bootstrap$' /usr/lib/systemd/user/ryoku-shell.service
 test -f /usr/lib64/libfprint-2-tod.so.1
 test -d /usr/lib64/libfprint-2/tod-1
 test -f /usr/lib64/libfprint-2/tod-1/libfprint-2-tod-1-broadcom.so

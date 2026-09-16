@@ -1,6 +1,0 @@
-#!/usr/bin/bash
-set -euo pipefail
-palette="${XDG_CACHE_HOME:-$HOME/.cache}/ryoku/colors.json"
-primary="$(jq -r '.primary // empty' "$palette" 2>/dev/null || true)"
-[[ "$primary" =~ ^#[0-9A-Fa-f]{6}$ ]] || exit 0
-hyprctl keyword general:col.active_border "rgb(${primary#\#})" >/dev/null

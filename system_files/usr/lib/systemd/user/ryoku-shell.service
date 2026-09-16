@@ -8,6 +8,10 @@ Environment=RYOKU_SHELL_DIR=/usr/share/ryoku-source/ryoku/shell
 Environment=QML2_IMPORT_PATH=/usr/lib/qt6/qml
 Environment=RYOKU_POLKIT_AGENT=1
 ExecStartPre=-/usr/bin/ryoku-shell quit
+# The shell's wallpaper renderer requires these per-user Matugen templates.
+# Seed them before the daemon starts rather than relying on a particular
+# Hyprland configuration callback, which older user configurations may omit.
+ExecStartPre=/usr/bin/bazzite-ryoku-matugen-bootstrap
 ExecStart=/usr/bin/ryoku-shell daemon
 Restart=on-failure
 RestartSec=2
