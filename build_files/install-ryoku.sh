@@ -176,6 +176,11 @@ chmod 755 /usr/bin/ryotunes
 # the exact runtime the laptop will boot.
 ryotunes_source="$src/ryotunes-source"
 mkdir -p "$ryotunes_source"
+# Bazzite ships libmpv's runtime library but deliberately excludes Fedora's
+# mpv-devel package because it would pull a conflicting Mesa development stack.
+# Rust's linker only needs the conventional unversioned linker name; point it
+# at the installed ABI library without altering the runtime package set.
+ln -sfn libmpv.so.2 /usr/lib64/libmpv.so
 curl --fail --location --silent --show-error \
   "https://github.com/ryoku-dev/ryotunes/archive/refs/tags/v1.0.6.tar.gz" \
   | tar -xz --strip-components=1 -C "$ryotunes_source"
@@ -357,6 +362,7 @@ test -x /usr/bin/ryotunes-cli
 test -x /usr/bin/ryotunes-qml
 ! ldd /usr/bin/ryotunesd | grep -q 'not found'
 test -e /usr/lib64/libmpv.so.2
+test -e /usr/lib64/libmpv.so
 test -x /usr/bin/matugen
 test -x /usr/bin/quickshell
 test -x /usr/bin/ryoku-monitor

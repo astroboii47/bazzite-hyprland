@@ -86,7 +86,6 @@ dnf5 install -y \
   qt6-qtsvg \
   qt6-qtshadertools-devel \
   mpv \
-  mpv-devel \
   mpv-libs \
   webkit2gtk4.1 \
   webkit2gtk4.1-devel \
