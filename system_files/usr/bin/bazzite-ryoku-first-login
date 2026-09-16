@@ -8,6 +8,22 @@ themes="$HOME/.local/share/qylock/themes"
 
 mkdir -p "$walls" "$wall_config" "$HOME/.local/share" "$HOME/.config/qylock" "$HOME/.config/hypr" "$HOME/.config/gtk-3.0"
 
+# Matugen's templates live per-user. Earlier images shipped the controller but
+# never seeded this tree, so no hypr-colors.lua was rendered and the focused
+# border fell back to Ryoku's built-in red.
+matugen_dir="$HOME/.config/matugen"
+mkdir -p "$matugen_dir/templates" "$HOME/.cache/ryoku"
+if [[ ! -f "$matugen_dir/config.toml" ]]; then
+  cp /usr/share/ryoku-source/ryoku/shell/matugen/config.toml "$matugen_dir/config.toml"
+fi
+for template in /usr/share/ryoku-source/ryoku/shell/matugen/templates/*; do
+  name="$(basename "$template")"
+  [[ -e "$matugen_dir/templates/$name" ]] || cp -a "$template" "$matugen_dir/templates/$name"
+done
+# This template is owned by the image because it controls the shared active
+# border role; refresh it so upgrades cannot retain the old secondary mapping.
+cp /usr/share/ryoku-source/ryoku/shell/matugen/templates/hypr-colors.lua "$matugen_dir/templates/hypr-colors.lua"
+
 # Install the real Ryoku configuration once per user.  The first prototype
 # replaced this tree with a small independent config, so Hub settings, dynamic
 # palette updates, plugins and cursor choices had no authoritative home.
