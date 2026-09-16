@@ -104,6 +104,7 @@ test -x /usr/bin/bazzite-ryoku-repair
 test -x /usr/bin/bazzite-display-scale
 test -x /usr/bin/bazzite-ryogami
 grep -q 'modules/binds.lua' /usr/bin/bazzite-ryoku-first-login
+grep -q 'config.json.example' /usr/bin/bazzite-ryoku-first-login
 test -x /usr/bin/powerprofilesctl
 test -x /usr/bin/wdisplays
 for tool in cava convert ddcutil hyprsunset jq powerprofilesctl qalc tesseract upower wf-recorder wtype zbarimg; do

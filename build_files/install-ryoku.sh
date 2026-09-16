@@ -67,6 +67,15 @@ RYOKU_BLOBS_BUILD="$src/build-blobs" \
 # so Bazzite does not need Arch's package layout or per-user generated copies.
 install -d /usr/share/ryoku-source
 cp -a "$src/ryoku" /usr/share/ryoku-source/
+# RYOKU_SHELL_DIR points the running shell at this preserved tree. QML helpers
+# consequently look for the compiled controller beside the source; provide the
+# deployed binary there so the dock and launcher can build their icon index.
+ln -s /usr/bin/ryoku-shell /usr/share/ryoku-source/ryoku/shell/ipc/ryoku-shell
+
+# Bazzite's / mount is the immutable deployment. Report the user's writable
+# filesystem in the storage card, which is the meaningful capacity on bootc.
+sed -i 's|df -B1 --output=used,size / 2>/dev/null|df -B1 --output=used,size \"$HOME\" 2>/dev/null|' \
+  /usr/share/ryoku-source/ryoku/shell/quickshell/shell/services/StatsFeed.qml
 install -d /usr/lib/qt6/qml/Ryoku/Ui /usr/lib/qt6/qml/Ryoku/FrameBars /usr/lib/qt6/qml/Ryoku/PluginKit
 cp -a "$src/ryoku/ui/." /usr/lib/qt6/qml/Ryoku/Ui/
 cp -a "$src/ryoku/shell/framebars/." /usr/lib/qt6/qml/Ryoku/FrameBars/
@@ -125,6 +134,8 @@ test -f /usr/share/applications/ryoku-hub.desktop
 test -f /etc/xdg/xdg-desktop-portal/hyprland-portals.conf
 test -f /usr/lib/qt6/qml/Ryoku/Blobs/qmldir
 test -f /usr/share/ryoku-source/ryoku/shell/quickshell/shell/shell.qml
+test -x /usr/share/ryoku-source/ryoku/shell/ipc/ryoku-shell
+grep -Fq 'df -B1 --output=used,size \"$HOME\"' /usr/share/ryoku-source/ryoku/shell/quickshell/shell/services/StatsFeed.qml
 test -f /usr/share/ryoku-source/ryoku/hub/quickshell/shell.qml
 grep -q 'pam_fprintd.so' /usr/share/ryoku/lockscreen/qylock/quickshell-lockscreen/assets/pam/ryoku-lock
 ! grep -q 'pam_fprintd_grosshack.so' /usr/share/ryoku/lockscreen/qylock/quickshell-lockscreen/assets/pam/ryoku-lock
