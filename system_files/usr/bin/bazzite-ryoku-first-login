@@ -97,6 +97,17 @@ end })
 EOF
 fi
 
+# Hyprland supports a keyboard-initiated pointer drag for touchpads: hold
+# SUPER+CTRL and move the pointer. It moves the focused window without a mouse
+# click, while the existing SUPER+left-click drag continues to work normally.
+if ! grep -Fq 'bazzite-ryoku-keyboard-window-drag' "$user_lua"; then
+  cat >> "$user_lua" <<'EOF'
+
+-- bazzite-ryoku-keyboard-window-drag
+hl.bind("SUPER + CTRL_L", hl.dsp.window.drag(), { mouse = true })
+EOF
+fi
+
 # The Bazzite base also has Plasma's optional media-overlay processes. In a
 # Hyprland login they can draw a second, unthemed OSD over Ryoku's own surface.
 # Stop only the visual overlay processes in this login; a later Plasma login
