@@ -74,6 +74,27 @@ if [[ -f "$binds_file" ]]; then
     -e 's|hl\.dsp\.exec_cmd("ryoku-cmd-brightness +5")|hl.dsp.exec_cmd("ryoku-shell brightness up")|g' \
     -e 's|hl\.dsp\.exec_cmd("ryoku-cmd-brightness -5")|hl.dsp.exec_cmd("ryoku-shell brightness down")|g' \
     "$binds_file"
+  # Super+wheel is window sizing in this image. Replace only Ryoku's shipped
+  # workspace-wheel rows; user-edited bindings remain untouched.
+  sed -i \
+    -e 's|hl\.bind(K(mod \.\. " + mouse_up"),[[:space:]]*hl\.dsp\.focus({ workspace = "r-1" }))|hl.bind(K(mod .. " + mouse_up"), hl.dsp.window.resize({ x = 40, y = 40, relative = true }), { repeating = true })|' \
+    -e 's|hl\.bind(K(mod \.\. " + mouse_down"),[[:space:]]*hl\.dsp\.focus({ workspace = "r+1" }))|hl.bind(K(mod .. " + mouse_down"), hl.dsp.window.resize({ x = -40, y = -40, relative = true }), { repeating = true })|' \
+    "$binds_file"
+fi
+
+# The early prototype placed gestures in /etc/xdg, but the real Ryoku config
+# lives in the user's tree. Add the overview gesture there once so it remains
+# active with the authoritative Ryoku session.
+user_lua="$hypr_config/user.lua"
+touch "$user_lua"
+if ! grep -Fq 'bazzite-ryoku-four-finger-overview' "$user_lua"; then
+  cat >> "$user_lua" <<'EOF'
+
+-- bazzite-ryoku-four-finger-overview
+hl.gesture({ fingers = 4, direction = "up", action = function()
+  hl.dispatch(hl.dsp.global("ryoku:overview"))
+end })
+EOF
 fi
 
 # The Bazzite base also has Plasma's optional media-overlay processes. In a

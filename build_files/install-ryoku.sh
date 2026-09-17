@@ -41,6 +41,17 @@ sed -i \
 grep -Fq 'active = "{{colors.primary.default.hex}}"' "$src/ryoku/shell/matugen/templates/hypr-colors.lua"
 grep -Fq 'hyprRGB(c.Primary)' "$src/ryoku/shell/ipc/matugen.go"
 
+# The real Ryoku launcher still read its selected-tile tint from the legacy
+# base16 color4 role. That role can remain brand red while the Material primary
+# already follows the wallpaper, so select from primary just like the shell,
+# OSD, and focused border do.
+sed -i \
+  -e 's/legible(vivid(adapter\.color4), elevated, 3\.0)/legible(vivid(adapter.primary), elevated, 3.0)/' \
+  -e 's/property color color4: "#e2342a"/property color primary: "#e2342a"/' \
+  "$src/ryoku/shell/quickshell/shell/modules/launcher/shared/Singletons/Scheme.qml"
+grep -Fq 'legible(vivid(adapter.primary), elevated, 3.0)' \
+  "$src/ryoku/shell/quickshell/shell/modules/launcher/shared/Singletons/Scheme.qml"
+
 # Fuzzel is kept as the lightweight launcher fallback. Its old system-wide
 # config pinned the selected result to Ryoku red; render it through the same
 # Matugen palette as the shell instead.
