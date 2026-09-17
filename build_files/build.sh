@@ -154,6 +154,7 @@ for tool in cava convert ddcutil hyprsunset jq powerprofilesctl qalc tesseract u
 done
 test -f /usr/lib/systemd/user/ryoku-shell.service
 grep -q '^ExecStartPre=/usr/bin/bazzite-ryoku-matugen-bootstrap$' /usr/lib/systemd/user/ryoku-shell.service
+grep -q '^ExecStartPre=/usr/bin/bazzite-ryoku-first-login$' /usr/lib/systemd/user/ryoku-shell.service
 test -f /usr/lib64/libfprint-2-tod.so.1
 test -d /usr/lib64/libfprint-2/tod-1
 test -f /usr/lib64/libfprint-2/tod-1/libfprint-2-tod-1-broadcom.so

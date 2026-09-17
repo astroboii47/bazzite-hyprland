@@ -52,6 +52,15 @@ sed -i \
 grep -Fq 'legible(vivid(adapter.primary), elevated, 3.0)' \
   "$src/ryoku/shell/quickshell/shell/modules/launcher/shared/Singletons/Scheme.qml"
 
+# The selected launcher tile is painted by Theme.qml rather than Scheme.qml.
+# It was independently hard-coded to Ryoku red, so derive that fill from the
+# same resolved accent role used everywhere else in the launcher.
+sed -i \
+  's|readonly property color threadBg: Qt.rgba(226/255, 52/255, 42/255, 0.13)|readonly property color threadBg: Qt.rgba(verm.r, verm.g, verm.b, 0.13)|' \
+  "$src/ryoku/shell/quickshell/shell/modules/launcher/shared/Singletons/Theme.qml"
+grep -Fq 'readonly property color threadBg: Qt.rgba(verm.r, verm.g, verm.b, 0.13)' \
+  "$src/ryoku/shell/quickshell/shell/modules/launcher/shared/Singletons/Theme.qml"
+
 # Fuzzel is kept as the lightweight launcher fallback. Its old system-wide
 # config pinned the selected result to Ryoku red; render it through the same
 # Matugen palette as the shell instead.
