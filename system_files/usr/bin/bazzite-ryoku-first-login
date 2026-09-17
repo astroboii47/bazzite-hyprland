@@ -87,6 +87,9 @@ fi
 # active with the authoritative Ryoku session.
 user_lua="$hypr_config/user.lua"
 touch "$user_lua"
+# Older image revisions briefly used CTRL_L, which is not an XKB keysym.
+# Correct that exact generated line before Hyprland parses this user config.
+sed -i 's/SUPER + CTRL_L/SUPER + Control_L/g' "$user_lua"
 if ! grep -Fq 'bazzite-ryoku-four-finger-overview' "$user_lua"; then
   cat >> "$user_lua" <<'EOF'
 
@@ -104,7 +107,7 @@ if ! grep -Fq 'bazzite-ryoku-keyboard-window-drag' "$user_lua"; then
   cat >> "$user_lua" <<'EOF'
 
 -- bazzite-ryoku-keyboard-window-drag
-hl.bind("SUPER + CTRL_L", hl.dsp.window.drag(), { mouse = true })
+hl.bind("SUPER + Control_L", hl.dsp.window.drag(), { mouse = true })
 EOF
 fi
 
