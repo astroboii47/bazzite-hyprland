@@ -125,11 +125,11 @@ fi
 # Use the icon set its layouts were designed and tested with.
 gsettings set org.gnome.desktop.interface icon-theme 'Papirus' 2>/dev/null || true
 gsettings set org.gnome.desktop.interface cursor-size 18 2>/dev/null || true
-cursor_theme="$(gsettings get org.gnome.desktop.interface cursor-theme 2>/dev/null | tr -d \"'\")"
+cursor_theme="$(gsettings get org.gnome.desktop.interface cursor-theme 2>/dev/null | tr -d "'")"
 if [[ "$cursor_theme" == "" || "$cursor_theme" == "default" || "$cursor_theme" == "Adwaita" ]]; then
   gsettings set org.gnome.desktop.interface cursor-theme 'Bibata-Modern-Ice' 2>/dev/null || true
 fi
-cursor_theme="$(gsettings get org.gnome.desktop.interface cursor-theme 2>/dev/null | tr -d \"'\")"
+cursor_theme="$(gsettings get org.gnome.desktop.interface cursor-theme 2>/dev/null | tr -d "'")"
 hyprctl setcursor "${cursor_theme:-Bibata-Modern-Ice}" 18 2>/dev/null || true
 if [[ ! -s "$HOME/.config/gtk-3.0/settings.ini" ]]; then
   printf '%s\n' '[Settings]' 'gtk-icon-theme-name=Papirus' > "$HOME/.config/gtk-3.0/settings.ini"
