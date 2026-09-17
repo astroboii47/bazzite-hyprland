@@ -31,3 +31,14 @@ done
 # cannot survive an image upgrade.
 install -m 644 "$source_dir/templates/hypr-colors.lua" \
   "$config_dir/templates/hypr-colors.lua"
+
+# A recovery override may exist only after a bad pre-start helper prevented
+# Ryoku from launching. This newer image is safe to start normally, so remove
+# exactly that temporary override during its final bypassed start. The next
+# login then uses the fixed full startup path without user intervention.
+recovery_override="${XDG_CONFIG_HOME:-$HOME/.config}/systemd/user/ryoku-shell.service.d/recover.conf"
+if [[ -f "$recovery_override" ]] \
+  && grep -Fqx 'ExecStartPre=/usr/bin/bazzite-ryoku-matugen-bootstrap' "$recovery_override"; then
+  rm -f "$recovery_override"
+  systemctl --user daemon-reload
+fi
