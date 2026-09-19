@@ -4,8 +4,11 @@
 # the lockscreen can talk to the enrolled reader again.
 case "$1/$2" in
   post/*)
-    # Give the reader a moment to finish USB resume before fprintd opens it.
-    sleep 1
-    /usr/bin/systemctl restart fprintd.service
+    # The reader can appear on USB before its ControlVault firmware session is
+    # ready. Waiting for the resumed udev queue removes the race that made a
+    # one-second delay work only intermittently after opening the lid.
+    /usr/bin/udevadm settle --timeout=8 || true
+    sleep 2
+    /usr/bin/systemctl try-restart fprintd.service
     ;;
 esac
